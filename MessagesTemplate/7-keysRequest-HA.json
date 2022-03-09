@@ -1,0 +1,8 @@
+{
+    "auth": "auth_key3",
+    "transaction_ID": "tr_id",
+    "group_amount": 3,
+    "infected_groups_ids": [
+        "group_id2"
+    ]
+}

@@ -1,0 +1,9 @@
+{
+    "transaction_ID": "tr_id",
+    "keys": [
+        {
+            "group_id": "group_id2",
+            "key": "GROUP2_AES256_KEY"
+        }
+    ]
+}

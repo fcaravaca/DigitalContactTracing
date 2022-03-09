@@ -1,0 +1,38 @@
+{
+    "transaction_ID": "tr_id",
+    "groups": [
+        {
+            "group_id": "group_id1",
+            "contact_ids": [
+                "AES256(XXXXXXXXXX,GROUP1_AES256_KEY)",
+                "AES256(XXXXXXXXXX,GROUP1_AES256_KEY)",
+                "AES256(XXXXXXXXXX,GROUP1_AES256_KEY)",
+                "AES256(XXXXXXXXXX,GROUP1_AES256_KEY)",
+                "AES256(XXXXXXXXXX,GROUP1_AES256_KEY)"
+            ]
+        },
+        {
+            "group_id": "group_id2",
+            "contact_ids": [
+                "AES256(XXXXXXXXXX,GROUP2_AES256_KEY)",
+                "AES256(XXXXXXXXXX,GROUP2_AES256_KEY)",
+                "AES256(XXXXXXXXXX,GROUP2_AES256_KEY)",
+                "AES256(XXXXXXXXXX,GROUP2_AES256_KEY)",
+                "AES256(XXXXXXXXXX,GROUP2_AES256_KEY)"
+            ]
+        },
+        {
+            "group_id": "group_id3",
+            "contact_ids": [
+                "AES256(XXXXXXXXXX,GROUP3_AES256_KEY)",
+                "AES256(XXXXXXXXXX,GROUP3_AES256_KEY)",
+                "AES256(XXXXXXXXXX,GROUP3_AES256_KEY)",
+                "AES256(XXXXXXXXXX,GROUP3_AES256_KEY)",
+                "AES256(XXXXXXXXXX,GROUP3_AES256_KEY)",
+                "AES256(XXXXXXXXXX,GROUP3_AES256_KEY)",
+                "AES256(XXXXXXXXXX,GROUP3_AES256_KEY)",
+                "AES256(XXXXXXXXXX,GROUP3_AES256_KEY)"
+            ]
+        }
+    ]
+}
