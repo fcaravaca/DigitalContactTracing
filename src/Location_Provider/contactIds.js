@@ -33,7 +33,7 @@ function encryptGroups(groups){
 
 
         return {
-            "group_id": group.id,
+            "group_id": group.group_id,
             "contact_ids": encrypted_ids
         }
     });
