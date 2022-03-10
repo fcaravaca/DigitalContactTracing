@@ -9,9 +9,7 @@ router.get('/', function(req, res, next) {
 
 router.post('/mobileIDs', function(req, res, next) {
   
-  console.log(req.body)
   const n = parseInt(req.body.amount)
-
 
   if(req.body.auth !== "key"){ // A proper check is needed
     res.status(401)
@@ -22,8 +20,6 @@ router.post('/mobileIDs', function(req, res, next) {
   }else{
 
     ids = mobileIds.getMobileIds(n)
-
-    console.log(ids)
 
     res.send({
       "transaction_ID": req.body.transaction_ID,

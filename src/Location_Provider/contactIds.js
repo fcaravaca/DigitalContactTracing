@@ -62,8 +62,6 @@ function getContactsOfId(id){
 // This is copy-paste to generate random phones, this can be deleated when getContactsOfId get a new 
 function generateRandomNumbers(n){
 
-    //console.log("Generating " + n + " phones")
-
     const mobileIds = Array.from(Array(n)).map((x, i) => {
         const randomNumber = Math.floor((Math.random() * 100000000) + 1);
 

@@ -17,7 +17,6 @@ router.post('/keysRequest', function(req, res, next) {
     res.send("Bad Request")
   }else{
 
-    console.log("Requesting keys to LP")
     keyRequest.requestKeys(req.body.transaction_ID).then(result =>{
 
       if(result.keys.length !== req.body.total_groups){ //Bad request
