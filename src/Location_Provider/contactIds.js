@@ -1,8 +1,10 @@
 var CryptoJS = require("crypto-js");
 const crypto = require('crypto');
-  
+const db = require('./conectorDB.js')
+var createError = require('http-errors');
+
 // Aggreagated function to get the contact of N groups
-function getContactIds(groups){
+function getContactIds(groups, transaction_ID){
     let contact_groups = groups.map((group) => {
         return {
             "group_id": group.group_id,
@@ -11,16 +13,18 @@ function getContactIds(groups){
 
     });
 
-    return encryptGroups(contact_groups)
+    return encryptGroups(contact_groups, transaction_ID)
 }
 
-function encryptGroups(groups){
+function encryptGroups(groups, transaction_ID){
     const encrypted_groups = groups.map((group)=>{
         
         const key = crypto.randomBytes(16).toString('hex') // With the toString generates a 256bit key
         const iv = crypto.randomBytes(8).toString('hex')
 
-        console.log("key:", key,"iv:",iv);
+        db.saveKeys(transaction_ID, group.group_id, key, iv).then(result =>{
+            null
+        }).catch(err => next(createError(err)))
 
         var encrypted_ids = CryptoJS.AES.encrypt(JSON.stringify(group.contact_ids), CryptoJS.enc.Utf8.parse(key), 
                             {mode: CryptoJS.mode.CBC,padding: CryptoJS.pad.Pkcs7,iv: CryptoJS.enc.Utf8.parse(iv)}).toString()

@@ -19,7 +19,7 @@ router.post('/contactTracingRequest', function(req, res, next) {
 
     res.send({
       "transaction_ID": req.body.transaction_ID,
-      "groups": contactIds.getContactIds(req.body.groups)
+      "groups": contactIds.getContactIds(req.body.groups, req.body.transaction_ID)
     });
   }
 
