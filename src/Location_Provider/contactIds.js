@@ -22,15 +22,8 @@ function encryptGroups(groups){
 
         console.log("key:", key,"iv:",iv);
 
-        var encrypted_ids = group.contact_ids.map((id) => {
-            
-            return CryptoJS.AES.encrypt(id, CryptoJS.enc.Utf8.parse(key), 
-                                        {mode: CryptoJS.mode.CBC,
-                                        padding: CryptoJS.pad.Pkcs7,
-                                        iv: CryptoJS.enc.Utf8.parse(iv) 
-                    }).toString()
-            })
-
+        var encrypted_ids = CryptoJS.AES.encrypt(JSON.stringify(group.contact_ids), CryptoJS.enc.Utf8.parse(key), 
+                            {mode: CryptoJS.mode.CBC,padding: CryptoJS.pad.Pkcs7,iv: CryptoJS.enc.Utf8.parse(iv)}).toString()
 
         return {
             "group_id": group.group_id,
