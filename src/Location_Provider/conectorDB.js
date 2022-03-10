@@ -25,9 +25,15 @@ function saveKeys(transaction_ID, group_id, key, iv){
 
 
 function getKeys(transaction_ID){
-
-
-
+    return new Promise(function(resolve, reject){
+        connection.query('SELECT group_id, aes_key, iv FROM KeyRegister WHERE transaction_ID = ?',[transaction_ID],  function (error, results, fields) {
+            if (error){
+                reject(error)
+            } else{
+                resolve(JSON.parse(JSON.stringify(results)))
+            }
+        });
+    })
 }
 
 module.exports = {
