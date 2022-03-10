@@ -31,7 +31,7 @@ function encryptGroups(groups, transaction_ID){
 
         return {
             "group_id": group.group_id,
-            "contact_ids": encrypted_ids
+            "contact_ids": encodeURI(encrypted_ids)
         }
     });
 
@@ -55,7 +55,7 @@ function getContactsOfGroup(ids){
 // Get the contact IDs from an unique ID -- This will be the contact tracing alg.
 // Right now it only generates a random amount of phones
 function getContactsOfId(id){
-    let contacts = generateRandomNumbers(Math.floor((Math.random()*7) + 1))
+    let contacts = generateRandomNumbers(Math.floor((Math.random()*3) + 1))
     return contacts
 }
 
