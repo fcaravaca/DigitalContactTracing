@@ -1,16 +1,16 @@
-const mysql = require('mysql')
+const mysql = require('mysql2')
 
 var connection = mysql.createPool({
     connectionLimit : 10,
-    host: 'localhost',
-    user: 'user',
-    password: 'user',
-    database: 'LP',
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE,
     timezone: 'Z',
     multipleStatements: true
-  });
+});
   
-
+console.log(process.env)
 function saveKeys(transaction_ID, group_id, key, iv){
     return new Promise(function(resolve, reject){
         connection.query('INSERT INTO KeyRegister VALUES (?,?,?,?,NOW())',[transaction_ID, group_id, key, iv],  function (error, results, fields) {

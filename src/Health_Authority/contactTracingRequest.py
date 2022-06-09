@@ -6,7 +6,7 @@ def contact_tracing(transaction_id, auth_key, groups):
     
     transaction_id = str(transaction_id) # Force string
 
-    url = 'http://localhost:4000/contactTracingRequest'
+    url = 'http://locationprovider2.com/contactTracingRequest'
     request_data = {
         "auth": auth_key,
         "transaction_ID": transaction_id,
