@@ -16,7 +16,7 @@ async function requestKeys(transaction_ID, url, useProxy){
                 maxSockets: 256,
                 maxFreeSockets: 256,
                 scheduling: 'lifo',
-                proxy: 'http://127.0.0.1:8888'
+                proxy: 'http://host.docker.internal:8888'
             })
         }
     }
