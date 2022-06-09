@@ -1,10 +1,27 @@
 const  got = require('got');
+const { HttpProxyAgent } = require('hpagent')
 
-async function requestKeys(transaction_ID){
+async function requestKeys(transaction_ID, url, useProxy){
 
-    const response = await got.post('http://localhost:4000/keysRequest', {
+    const request_info = {
         json: {"transaction_ID": transaction_ID, "auth": "location_key_itpa"},
-    }).json();
+
+    }
+
+    if(useProxy){
+        request_info["agent"] = {
+            http: new HttpProxyAgent({
+                keepAlive: true,
+                keepAliveMsecs: 1000,
+                maxSockets: 256,
+                maxFreeSockets: 256,
+                scheduling: 'lifo',
+                proxy: 'http://127.0.0.1:8888'
+            })
+        }
+    }
+
+    const response = await got.post(url + '/keysRequest', request_info).json().catch(err => console.log(err));
 
     return response;
 }

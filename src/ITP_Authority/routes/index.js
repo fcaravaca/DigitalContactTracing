@@ -17,7 +17,7 @@ router.post('/keysRequest', function(req, res, next) {
     res.send("Bad Request")
   }else{
 
-    keyRequest.requestKeys(req.body.transaction_ID).then(result =>{
+    keyRequest.requestKeys(req.body.transaction_ID, req.body.LP_url, true).then(result =>{
 
       if(result.keys.length !== req.body.total_groups){ //Bad request
         res.status(400)

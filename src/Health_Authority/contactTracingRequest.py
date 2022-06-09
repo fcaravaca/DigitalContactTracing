@@ -2,11 +2,11 @@ import requests
 import random
 import uuid
 
-def contact_tracing(transaction_id, auth_key, groups):
+def contact_tracing(transaction_id, auth_key, groups, LP_url):
     
     transaction_id = str(transaction_id) # Force string
 
-    url = 'http://locationprovider2.com/contactTracingRequest'
+    url = LP_url + '/contactTracingRequest'
     request_data = {
         "auth": auth_key,
         "transaction_ID": transaction_id,
@@ -66,4 +66,4 @@ if __name__ == "__main__":
 
     print("Infected groups:", groups["infected_group_ids"])
 
-    contact_tracing(transaction_id, auth_key_Location_provider, groups["all_groups"])
+    contact_tracing(transaction_id, auth_key_Location_provider, groups["all_groups"], "http://locationprovider2.com")
