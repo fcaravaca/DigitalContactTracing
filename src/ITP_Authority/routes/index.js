@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var keyRequest = require('../keyRequest')
+var db = require('../connectorDB')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -17,14 +18,21 @@ router.post('/keysRequest', function(req, res, next) {
     res.send("Bad Request")
   }else{
 
-    keyRequest.requestKeys(req.body.transaction_ID, req.body.LP_url, true).then(result =>{
+    const HA_ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+    db.saveTransaction(req.body.transaction_ID, HA_ip,  req.body.LP_url, req.body.total_groups, req.body.infected_groups.length).then(()=>{
 
+
+
+    keyRequest.requestKeys(req.body.transaction_ID, req.body.LP_url, true).then(result =>{
+      let reason = ""
       if(result.keys.length !== req.body.total_groups){ //Bad request
+        reason = "Bad request: wrong num of groups"
         res.status(400)
         res.send({
           "transaction_ID": req.body.transaction_ID,
-          "status": "Bad request: wrong num of groups"
+          "status": reason
         })
+        db.saveTransactionResult(req.body.transaction_ID, HA_ip,  req.body.LP_url, reason)
         return;
       }
 
@@ -37,11 +45,13 @@ router.post('/keysRequest', function(req, res, next) {
       })
 
       if(keys_to_send.length !== req.body.infected_groups.length){ // Bad request: groups not included
+        reason = "Bad request: group not found"
         res.status(400)
         res.send({
           "transaction_ID": req.body.transaction_ID,
-          "status": "Bad request: group not found"
+          "status": reason
         })
+        db.saveTransactionResult(req.body.transaction_ID, HA_ip,  req.body.LP_url, reason)
         return;
       }
       
@@ -49,15 +59,23 @@ router.post('/keysRequest', function(req, res, next) {
         "transaction_ID": req.body.transaction_ID,
         "keys": keys_to_send
       });
-      
+      db.saveTransactionResult(req.body.transaction_ID, HA_ip,  req.body.LP_url, "Transaction OK")
 
-    }).catch(err =>
+    }).catch(err => {
+
       res.send({
         "transaction_ID": req.body.transaction_ID,
         "status": "error"
       })
-    )
-
+      db.saveTransactionResult(req.body.transaction_ID, HA_ip,  req.body.LP_url, err.toString().substring(0,255))
+    })
+  }).catch(err => {
+    console.log(err)
+    res.send({
+      "transaction_ID": req.body.transaction_ID,
+      "status": "error"
+    })
+  })
   }
 });
 
