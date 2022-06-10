@@ -25,9 +25,8 @@ def process_requests(keys, contact_tr_reply):
         message_bytes = base64.b64decode(base64_bytes)
 
         print("Key:", group["aes_key"], "| IV:", group["iv"],"\n")
-        
 
-        cipher = AES.new(bytes(group["aes_key"], "utf-8"), AES.MODE_CBC, bytes(group["iv"], "utf-8"))
+        cipher = AES.new(bytes.fromhex(group["aes_key"]), AES.MODE_CBC, bytes.fromhex(group["iv"]))
         pt = unpad(cipher.decrypt(message_bytes),AES.block_size) # The unpad is necessary
         decoded_message = pt.decode("utf-8")
         

@@ -20,13 +20,13 @@ async function encryptGroups(groups, transaction_ID){
     const encrypted_groups = []
     for(let group of groups){
 
-        const key = crypto.randomBytes(16).toString('hex') // With the toString generates a 256bit key
-        const iv = crypto.randomBytes(8).toString('hex')
+        const key = crypto.randomBytes(32).toString('hex') // 256 bit key
+        const iv = crypto.randomBytes(16).toString('hex')
 
         await db.saveKeys(transaction_ID, group.group_id, key, iv)
 
-        var encrypted_ids = CryptoJS.AES.encrypt(JSON.stringify(group.contact_ids), CryptoJS.enc.Utf8.parse(key), 
-            {mode: CryptoJS.mode.CBC,padding: CryptoJS.pad.Pkcs7,iv: CryptoJS.enc.Utf8.parse(iv)}).toString()
+        var encrypted_ids = CryptoJS.AES.encrypt(JSON.stringify(group.contact_ids), CryptoJS.enc.Hex.parse(key), 
+            {mode: CryptoJS.mode.CBC,padding: CryptoJS.pad.Pkcs7,iv: CryptoJS.enc.Hex.parse(iv)}).toString()
 
         encrypted_groups.push({
             "group_id": group.group_id,

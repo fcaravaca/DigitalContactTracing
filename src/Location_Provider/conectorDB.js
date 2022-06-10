@@ -10,7 +10,6 @@ var connection = mysql.createPool({
     multipleStatements: true
 });
   
-console.log(process.env)
 function saveKeys(transaction_ID, group_id, key, iv){
     return new Promise(function(resolve, reject){
         connection.query('INSERT INTO KeyRegister VALUES (?,?,?,?,NOW())',[transaction_ID, group_id, key, iv],  function (error, results, fields) {
