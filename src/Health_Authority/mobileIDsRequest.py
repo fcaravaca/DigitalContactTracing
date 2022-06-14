@@ -1,6 +1,9 @@
 import requests
 import uuid
 
+import encryptSignMessages
+import json 
+
 def mobile_id_request(n, transaction_id, auth_key, id_provider_url):
     
     transaction_id = str(transaction_id) # Force string
@@ -13,10 +16,21 @@ def mobile_id_request(n, transaction_id, auth_key, id_provider_url):
     }
 
     print("Requested data:", request_data, "\n")
-    response = requests.post(url, json = request_data)
+    encryptedData, signature = encryptSignMessages.get_ciphertext_and_signature(request_data, "../../DevelopmentTestKeys/HA.pem", "../../DevelopmentTestKeys/IDP_public.pem")
+    
+    response = requests.post(url, json = {"id": "HA", "encryptedData": encryptedData, "signature": signature})
+    encrypted_response = json.loads(response.text)
 
-    print("Response:", response.status_code, response.text)
-    return response
+    decypted_response = encryptSignMessages.get_text_from_ciphertext_and_signature(
+        encrypted_response["encryptedData"], 
+        encrypted_response["signature"],
+         "../../DevelopmentTestKeys/HA.pem",
+        "../../DevelopmentTestKeys/IDP_public.pem"
+    )
+
+
+    print("Response:", decypted_response)
+    return decypted_response
 
 
 

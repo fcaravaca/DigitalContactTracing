@@ -13,10 +13,9 @@ function encryptMessage(text, ownPrivateKey, theirPublicKey){
 
     const signature = crypto.sign("sha256", encrypted, {
         key: privateKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
     });
 
-    return {ciphertext: encrypted.toString("base64"), signature: signature.toString("base64")};
+    return {encryptedData: encrypted.toString("base64"), signature: signature.toString("base64")};
 }
 
 
@@ -30,10 +29,9 @@ function decryptMessage(ciphertext, signature, ownPrivateKey, theirPublicKey){
     const isVerified = crypto.verify(
         "sha256", Buffer.from(ciphertext, "base64"), {
           key: publicKey,
-          padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
         }, Buffer.from(signature, "base64")
       );
-
+    console.log(decrypted.toString("utf8"))
     if(isVerified){
         return decrypted.toString("utf8");
     }else{
