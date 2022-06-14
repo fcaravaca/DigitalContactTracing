@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var mobileIds = require('../getMobileIds')
 
-var encryptMessages = require("../encryptMessages")
+var signatureUtility = require("../signatureUtility")
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -11,36 +11,41 @@ router.get('/', function(req, res, next) {
 
 router.post('/mobileIDs', function(req, res, next) {
 
-  const encryptedData = req.body.encryptedData
+  const info = req.body.info
   const signature = req.body.signature
-  if(!encryptedData || !signature){
+  const id = req.body.id
+
+  if(!info || !signature || !id){
     res.status(401)
     res.send("Unauthrorized")
     return;
   }
 
-  const host = req.body.id
+  if(signatureUtility.checkSignature(JSON.stringify(info), signature, id + "_public.pem")){
+    const n = parseInt(info.amount)
 
-  let decryptedData = encryptMessages.decryptMessage(encryptedData, signature, "IDP.pem", host + "_public.pem")
-  decryptedData = JSON.parse(decryptedData)
-  const n = parseInt(decryptedData.amount)
+    if(n < 2 || info.transaction_ID === null){
+      res.status(400)
+      res.send("Bad Request")
+    }else{
 
-  if(n < 2 || decryptedData.transaction_ID === null){
-    res.status(400)
-    res.send("Bad Request")
+      ids = mobileIds.getMobileIds(n)
+
+      information = {
+        "transaction_ID": info.transaction_ID,
+        "amount": n,
+        "ids": ids
+      };
+
+      information = JSON.stringify(information)
+
+      const signature_message = signatureUtility.generateSignature(information, "IDP.pem")
+
+    res.send({info: information, id: "IDP", signature: signature_message})
+  }
   }else{
-
-    ids = mobileIds.getMobileIds(n)
-
-    information = {
-      "transaction_ID": req.body.transaction_ID,
-      "amount": n,
-      "ids": ids
-    };
-
-    information = encryptMessages.encryptMessage(JSON.stringify(information), "IDP.pem", "HA_public.pem")
-
-    res.send({...information, id: "IDP"})
+    console.log("Not valid signature")
+    res.send("error")
   }
 });
 
