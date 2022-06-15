@@ -31,9 +31,7 @@ router.post('/contactTracingRequest', async function(req, res, next) {
         "transaction_ID": info.transaction_ID,
         "groups":groupIds
       };
-
-      information = JSON.stringify(information)
-      const signature_message = signatureUtility.generateSignature(information, "private.pem")
+      const signature_message = signatureUtility.generateSignature(JSON.stringify(information), "private.pem")
       res.send({info: information, id: process.env.ID, signature: signature_message})
     }
   }else{

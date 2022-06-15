@@ -9,8 +9,7 @@ async function requestKeys(transaction_ID, url, useProxy){
 
     let information = {id: "ITPA", "transaction_ID": transaction_ID}
 
-    information_str = JSON.stringify(information)
-    const signature_message = signatureUtility.generateSignature(information_str, "ITPA.pem")
+    const signature_message = signatureUtility.generateSignature(JSON.stringify(information), "ITPA.pem")
     information = {json : {info: information,  signature: signature_message, id: "ITPA"}}
 
     if(useProxy){

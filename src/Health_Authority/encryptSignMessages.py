@@ -12,7 +12,6 @@ def get_signature(object, ownPrivateKey):
     ownPrivateKey = RSA.import_key(key)
 
     object = base64.b64encode(json.dumps(object, separators=(',', ':')).encode())
-
     sign = SHA256.new(object)
     signer = pkcs1_15.new(ownPrivateKey)
     signature = signer.sign(sign)
@@ -22,7 +21,7 @@ def check_signature(object_info, signature, theirPublicKey):
     with open(theirPublicKey, "r") as fh:
         key = fh.read()
     theirPublicKey = RSA.import_key(key)
-
+    object_info = json.dumps(object_info, separators=(',', ':'))
     object_info = base64.b64encode(str(object_info).encode())
 
     try:
@@ -37,5 +36,5 @@ def check_signature(object_info, signature, theirPublicKey):
 if __name__ == "__main__":
     value = {"text": "This is a very private message"}
     signature = get_signature(value, "../../DevelopmentTestKeys/HA.pem")
-    validSignature = check_signature(json.dumps(value, separators=(',', ':')), signature , "../../DevelopmentTestKeys/HA_public.pem")
+    validSignature = check_signature(value, signature , "../../DevelopmentTestKeys/HA_public.pem")
     print(validSignature)

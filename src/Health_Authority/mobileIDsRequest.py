@@ -24,7 +24,8 @@ def mobile_id_request(n, transaction_id, id_provider_url):
         response_data["info"], 
         response_data["signature"],
         "../../DevelopmentTestKeys/IDP_public.pem"
-    )   
+    ) 
+
     if valid_signature:
         print("Response:", response_data["info"])
         return response_data["info"]

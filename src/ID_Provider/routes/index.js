@@ -38,9 +38,7 @@ router.post('/mobileIDs', function(req, res, next) {
         "ids": ids
       };
 
-      information = JSON.stringify(information)
-
-      const signature_message = signatureUtility.generateSignature(information, "IDP.pem")
+      const signature_message = signatureUtility.generateSignature(JSON.stringify(information), "IDP.pem")
       connectorDB.registerRequest(info.transaction_ID, id, n).catch(err => console.log(err))
 
     res.send({info: information, id: "IDP", signature: signature_message})

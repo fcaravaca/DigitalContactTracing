@@ -16,8 +16,7 @@ router.post('/keysRequest', function(req, res, next) {
 
   function sendInformation(information, res){
     try{
-      information = JSON.stringify(information)
-      const signature_message = signatureUtility.generateSignature(information, "ITPA.pem")
+      const signature_message = signatureUtility.generateSignature(JSON.stringify(information), "ITPA.pem")
       res.send({info: information, id: "ITPA", signature: signature_message})
     }catch(err){
       console.log(err)
