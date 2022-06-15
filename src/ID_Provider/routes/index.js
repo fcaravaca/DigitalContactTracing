@@ -3,6 +3,7 @@ var router = express.Router();
 var mobileIds = require('../getMobileIds')
 
 var signatureUtility = require("../signatureUtility")
+var connectorDB = require("../connectorDB")
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -40,6 +41,7 @@ router.post('/mobileIDs', function(req, res, next) {
       information = JSON.stringify(information)
 
       const signature_message = signatureUtility.generateSignature(information, "IDP.pem")
+      connectorDB.registerRequest(info.transaction_ID, id, n).catch(err => console.log(err))
 
     res.send({info: information, id: "IDP", signature: signature_message})
   }
