@@ -76,15 +76,15 @@ if __name__ == "__main__":
     print("-"*40)
 
     keys1 = requestKeysToITPA.key_request_ha_itpa(
-        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "http://locationprovider1.com", "http://itpa.com"
+        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "LP1", "http://itpa.com"
     )
 
     keys2 = requestKeysToITPA.key_request_ha_itpa(
-        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "http://locationprovider2.com", "http://itpa.com"
+        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "LP2", "http://itpa.com"
     )
 
     keys3 = requestKeysToITPA.key_request_ha_itpa(
-        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "http://locationprovider3.com", "http://itpa.com"
+        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "LP3", "http://itpa.com"
     )
 
     print("-"*40)

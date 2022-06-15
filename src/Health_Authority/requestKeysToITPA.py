@@ -2,7 +2,7 @@ import requests
 import encryptSignMessages
 import json 
 
-def key_request_ha_itpa(transaction_id, num_groups, infected_groups, LP_url, ITPA_url):
+def key_request_ha_itpa(transaction_id, num_groups, infected_groups, LP_ID, ITPA_url):
     
     transaction_id = str(transaction_id) # Force string
 
@@ -11,7 +11,7 @@ def key_request_ha_itpa(transaction_id, num_groups, infected_groups, LP_url, ITP
         "transaction_ID": transaction_id,
         "total_groups": num_groups,
         "infected_groups": infected_groups,
-        "LP_url": LP_url
+        "LP_ID": LP_ID
     }
 
     print("Requested data:", request_data, "\n")
@@ -38,4 +38,4 @@ if __name__ == "__main__":
     num_groups = 7
     infected_groups = ["eb346f68-d94c-4d8b-9b67-e644d71484b9"]
 
-    key_request_ha_itpa(transaction_id, num_groups, infected_groups, "http://locationprovider1.com", "http://itpa.com")
+    key_request_ha_itpa(transaction_id, num_groups, infected_groups, "LP_1", "http://itpa.com")

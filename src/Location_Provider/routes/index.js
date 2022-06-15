@@ -26,7 +26,7 @@ router.post('/contactTracingRequest', async function(req, res, next) {
       res.status(400)
       res.send("Bad Request")
     }else{
-      const groupIds =  await contactIds.getContactIds(info.groups, info.transaction_ID)
+      const groupIds =  await contactIds.getContactIds(info.groups, info.transaction_ID, id)
       information = {
         "transaction_ID": info.transaction_ID,
         "groups":groupIds

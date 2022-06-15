@@ -40,9 +40,9 @@ router.post('/keysRequest', function(req, res, next) {
     res.status(400)
     res.send("Bad Request")
   }else{
-    const HA_ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
-    db.saveTransaction(info.transaction_ID, HA_ip,  info.LP_url, info.total_groups, info.infected_groups.length).then(()=>{
-      keyRequest.requestKeys(info.transaction_ID, info.LP_url, true).then(result =>{
+
+    db.saveTransaction(info.transaction_ID, id,  info.LP_ID, info.total_groups, info.infected_groups.length).then(()=>{
+      keyRequest.requestKeys(info.transaction_ID, info.LP_ID, true).then(result =>{
         let reason = ""
         result = result.info
         if(result.keys.length !== info.total_groups){ //Bad request
@@ -54,7 +54,7 @@ router.post('/keysRequest', function(req, res, next) {
           }
 
           sendInformation(information, res)
-          db.saveTransactionResult(info.transaction_ID, HA_ip,  info.LP_url, reason)
+          db.saveTransactionResult(info.transaction_ID, id,  info.LP_ID, reason)
           return;
         }
 
@@ -74,7 +74,7 @@ router.post('/keysRequest', function(req, res, next) {
             "status": reason
           }
           sendInformation(information, res)
-          db.saveTransactionResult(info.transaction_ID, HA_ip,  info.LP_url, reason)
+          db.saveTransactionResult(info.transaction_ID, id,  info.LP_ID, reason)
           return;
         }
         
@@ -82,8 +82,8 @@ router.post('/keysRequest', function(req, res, next) {
           "transaction_ID": info.transaction_ID,
           "keys": keys_to_send
         };
+        db.saveTransactionResult(info.transaction_ID, id,  info.LP_ID, "Transaction OK").catch(err => console.log(err))
         sendInformation(information, res)
-        db.saveTransactionResult(info.transaction_ID, HA_ip,  info.LP_url, "Transaction OK")
 
       }).catch(err => {
         console.log(err)
@@ -92,7 +92,7 @@ router.post('/keysRequest', function(req, res, next) {
           "status": "error"
         }
         sendInformation(information, res)
-        db.saveTransactionResult(info.transaction_ID, HA_ip,  info.LP_url, err.toString().substring(0,255))
+        db.saveTransactionResult(info.transaction_ID, HA_ip,  info.LP_ID, err.toString().substring(0,255))
       })
     }).catch(err => {
       console.log(err)

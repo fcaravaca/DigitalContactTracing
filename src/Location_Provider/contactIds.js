@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const db = require('./conectorDB.js')
   
 // Aggreagated function to get the contact of N groups
-async function getContactIds(groups, transaction_ID){
+async function getContactIds(groups, transaction_ID, health_authority){
     let contact_groups = groups.map((group) => {
         return {
             "group_id": group.group_id,
@@ -12,10 +12,10 @@ async function getContactIds(groups, transaction_ID){
 
     });
 
-    return await encryptGroups(contact_groups, transaction_ID)
+    return await encryptGroups(contact_groups, transaction_ID, health_authority)
 }
 
-async function encryptGroups(groups, transaction_ID){
+async function encryptGroups(groups, transaction_ID, health_authority){
 
     const encrypted_groups = []
     for(let group of groups){
@@ -23,7 +23,7 @@ async function encryptGroups(groups, transaction_ID){
         const key = crypto.randomBytes(32).toString('hex') // 256 bit key
         const iv = crypto.randomBytes(16).toString('hex')
 
-        await db.saveKeys(transaction_ID, group.group_id, key, iv)
+        await db.saveKeys(transaction_ID, health_authority, group.group_id, key, iv)
 
         var encrypted_ids = CryptoJS.AES.encrypt(JSON.stringify(group.contact_ids), CryptoJS.enc.Hex.parse(key), 
             {mode: CryptoJS.mode.CBC,padding: CryptoJS.pad.Pkcs7,iv: CryptoJS.enc.Hex.parse(iv)}).toString()

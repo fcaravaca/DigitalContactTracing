@@ -3,9 +3,13 @@ const { HttpProxyAgent } = require('hpagent')
 
 var signatureUtility = require("../signatureUtility")
 
+const urls = {
+    "LP1": "http://locationprovider1.com",
+    "LP2": "http://locationprovider2.com",
+    "LP3": "http://locationprovider3.com",
+}
 
-
-async function requestKeys(transaction_ID, url, useProxy){
+async function requestKeys(transaction_ID, LP_ID, useProxy){
 
     let information = {id: "ITPA", "transaction_ID": transaction_ID}
 
@@ -25,7 +29,7 @@ async function requestKeys(transaction_ID, url, useProxy){
         }
     }
 
-    const response = await got.post(url + '/keysRequest', information).json().catch(err => console.log(err));
+    const response = await got.post(urls[LP_ID] + '/keysRequest', information).json().catch(err => console.log(err));
     const isValidSignature = signatureUtility.checkSignature(JSON.stringify(response.info), response.signature, response.id + "_public.pem")
     if(isValidSignature){
         return response;
