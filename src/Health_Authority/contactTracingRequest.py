@@ -2,23 +2,36 @@ import requests
 import random
 import uuid
 
-def contact_tracing(transaction_id, auth_key, groups, LP_url):
+import encryptSignMessages
+import json
+
+def contact_tracing(transaction_id, groups, LP_url, LP_pub):
     
     transaction_id = str(transaction_id) # Force string
 
     url = LP_url + '/contactTracingRequest'
     request_data = {
-        "auth": auth_key,
         "transaction_ID": transaction_id,
         "groups": groups
     }
-
+    signature = encryptSignMessages.get_signature(request_data, "../../DevelopmentTestKeys/HA.pem")
 
     print("Requested data:", request_data, "\n")
-    response = requests.post(url, json = request_data)
+    response = requests.post(url, json = {"id": "HA", "info": (request_data), "signature": signature})
+    print(response)
+    response_data = json.loads(response.text)
+    
+    valid_signature = encryptSignMessages.check_signature(
+        response_data["info"], 
+        response_data["signature"],
+        LP_pub
+    )   
 
-    print("Response:", response.status_code, response.text)
-    return response
+    if valid_signature:
+        print("Response:", response_data["info"])
+        return response_data["info"]
+    else:
+        return None
 
 def create_groups(infected_phones, non_infected_phones, max_group_size):
 
@@ -54,7 +67,7 @@ def create_groups(infected_phones, non_infected_phones, max_group_size):
 
 if __name__ == "__main__":
     transaction_id = str(uuid.uuid4())
-    auth_key_Location_provider = "location_key"
+
     infected_phones = ["+34 665 815 328","+34 625 939 653","+34 695 860 912"]
     non_infected_phones = ["+34 680 324 855","+34 611 215 353","+34 684 469 808","+34 636 098 607",
                            "+34 649 780 929","+34 690 057 633","+34 624 676 105","+34 663 410 563",
@@ -66,4 +79,4 @@ if __name__ == "__main__":
 
     print("Infected groups:", groups["infected_group_ids"])
 
-    contact_tracing(transaction_id, auth_key_Location_provider, groups["all_groups"], "http://locationprovider2.com")
+    contact_tracing(transaction_id, groups["all_groups"], "http://locationprovider1.com", "../../DevelopmentTestKeys/LP1_public.pem")

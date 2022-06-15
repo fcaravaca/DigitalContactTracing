@@ -10,7 +10,6 @@ def mobile_id_request(n, transaction_id, auth_key, id_provider_url):
 
     url = id_provider_url + '/mobileIDs'
     request_data = {
-        "auth": auth_key,
         "transaction_ID": transaction_id,
         "amount": n
     }
