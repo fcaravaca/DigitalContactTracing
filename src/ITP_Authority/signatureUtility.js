@@ -5,8 +5,6 @@ var fs = require("fs");
 function generateSignature(text, ownPrivateKey){
 
     const buffer = Buffer.from(text).toString("base64");
-    console.log(text)
-    console.log(buffer)
     const privateKey = fs.readFileSync(path.resolve(ownPrivateKey), "utf8");
 
     const signature = crypto.sign("sha256", buffer, {
@@ -20,7 +18,6 @@ function generateSignature(text, ownPrivateKey){
 function checkSignature(text, signature, theirPublicKey){
     const buffer = Buffer.from(text).toString("base64")
     const publicKey = fs.readFileSync(path.resolve(theirPublicKey), "utf8");
-
     const isVerified = crypto.verify(
         "sha256", buffer, {
           key: publicKey,

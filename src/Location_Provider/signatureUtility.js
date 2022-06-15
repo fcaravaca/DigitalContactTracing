@@ -3,7 +3,6 @@ var path = require("path");
 var fs = require("fs");
 
 function generateSignature(text, ownPrivateKey){
-
     const buffer = Buffer.from(text).toString("base64");
     const privateKey = fs.readFileSync(path.resolve(ownPrivateKey), "utf8");
 
@@ -18,7 +17,6 @@ function generateSignature(text, ownPrivateKey){
 function checkSignature(text, signature, theirPublicKey){
     console.log(text, signature, console.log(theirPublicKey))
     const buffer = Buffer.from(text).toString("base64")
-    console.log(buffer)
     const publicKey = fs.readFileSync(path.resolve(theirPublicKey), "utf8");
 
     const isVerified = crypto.verify(

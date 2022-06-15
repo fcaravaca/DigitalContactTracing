@@ -79,13 +79,13 @@ if __name__ == "__main__":
         transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "http://locationprovider1.com", "http://itpa.com"
     ))
 
-    #keys2 = json.loads(requestKeysToITPA.key_request_ha_itpa(
-    #    transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "http://locationprovider2.com", "http://itpa.com"
-    #))
+    keys2 = json.loads(requestKeysToITPA.key_request_ha_itpa(
+        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "http://locationprovider2.com", "http://itpa.com"
+    ))
 
-    #keys3 = json.loads(requestKeysToITPA.key_request_ha_itpa(
-    #    transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "http://locationprovider3.com", "http://itpa.com"
-    #))
+    keys3 = json.loads(requestKeysToITPA.key_request_ha_itpa(
+        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "http://locationprovider3.com", "http://itpa.com"
+    ))
 
     print("-"*40)
     print("Decryption")

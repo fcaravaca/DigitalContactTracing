@@ -34,7 +34,7 @@ router.post('/contactTracingRequest', async function(req, res, next) {
 
       information = JSON.stringify(information)
       const signature_message = signatureUtility.generateSignature(information, "private.pem")
-      res.send({info: information, id: "LP", signature: signature_message})
+      res.send({info: information, id: process.env.ID, signature: signature_message})
     }
   }else{
     console.log("Not valid signature")
@@ -64,7 +64,7 @@ router.post('/keysRequest', function(req, res, next) {
       db.getKeys(info.transaction_ID).then(result => {
         information = {"transaction_ID": info.transaction_ID, "keys": result}
         const signature_message = signatureUtility.generateSignature(JSON.stringify(information), "private.pem")
-        res.send({info: information, id: "LP", signature: signature_message})
+        res.send({info: information, id: process.env.ID, signature: signature_message})
       }).catch(err => {
         console.log(err)
         res.send({"transaction_ID": info.transaction_ID, "status": err})

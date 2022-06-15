@@ -3,3 +3,5 @@ services:
     web:
       ports:
         - 2000:4000
+      environment:
+        ID: "LP1"
