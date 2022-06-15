@@ -91,8 +91,8 @@ if __name__ == "__main__":
     print("Decryption")
 
     id_list = process_requests(keys1, contact_tr_reply1)
-    #id_list = id_list + process_requests(keys2, contact_tr_reply2)
-    #id_list = id_list + process_requests(keys3, contact_tr_reply3)
+    id_list = id_list + process_requests(keys2, contact_tr_reply2)
+    id_list = id_list + process_requests(keys3, contact_tr_reply3)
         
     print("-"*40)
     print("IDs to notify")

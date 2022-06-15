@@ -28,8 +28,11 @@ async function requestKeys(transaction_ID, url, useProxy){
 
     const response = await got.post(url + '/keysRequest', information).json().catch(err => console.log(err));
     const isValidSignature = signatureUtility.checkSignature(JSON.stringify(response.info), response.signature, response.id + "_public.pem")
-    console.log("valid signature:", isValidSignature)
-    return response;
+    if(isValidSignature){
+        return response;
+    }else{
+        return {info: {keys: []}}
+    }
 }
 
 module.exports = {requestKeys}
