@@ -42,9 +42,6 @@ if __name__ == "__main__":
     infected_phones = ["+34 665 815 328","+34 625 939 653","+34 695 860 912","+34 649 069 543",
                        "+34 635 870 176","+34 603 184 059","+34 696 154 033","+34 610 367 133"]
 
-    auth_key_ID_provider = "key"
-    auth_key_Location_provider = "location_key"
-    auth_key_ITPA_provider = "key_itpa"
     max_group_size = 4
 
     print("\nGenerated Transaction ID:", transaction_id)
@@ -53,7 +50,7 @@ if __name__ == "__main__":
     print("-"*40)
     print("Requesting Mobile IDs")
     print("-"*40)
-    non_infected_phones = json.loads(mobileIDsRequest.mobile_id_request(11*len(infected_phones), transaction_id, auth_key_ID_provider, "http://idprovider.com").text)
+    non_infected_phones = json.loads(mobileIDsRequest.mobile_id_request(11*len(infected_phones), transaction_id, "http://idprovider.com"))
 
     print("-"*40)
     print("Requesting Contact traicing IDs")
@@ -63,39 +60,39 @@ if __name__ == "__main__":
     print("Infected groups:", groups["infected_group_ids"])
 
     contact_tr_reply1 = json.loads(contactTracingRequest.contact_tracing(
-        transaction_id, auth_key_Location_provider, groups["all_groups"], "http://locationprovider1.com"
-    ).text)
+        transaction_id, groups["all_groups"], "http://locationprovider1.com", "../../DevelopmentTestKeys/LP1_public.pem"
+    ))
 
     contact_tr_reply2 = json.loads(contactTracingRequest.contact_tracing(
-        transaction_id, auth_key_Location_provider, groups["all_groups"], "http://locationprovider2.com"
-    ).text)
+        transaction_id, groups["all_groups"], "http://locationprovider2.com", "../../DevelopmentTestKeys/LP2_public.pem"
+    ))
 
     contact_tr_reply3 = json.loads(contactTracingRequest.contact_tracing(
-        transaction_id, auth_key_Location_provider, groups["all_groups"], "http://locationprovider3.com"
-    ).text)
+        transaction_id, groups["all_groups"], "http://locationprovider3.com", "../../DevelopmentTestKeys/LP3_public.pem"
+    ))
 
     print("-"*40)
     print("Requesting Keys")
     print("-"*40)
 
     keys1 = json.loads(requestKeysToITPA.key_request_ha_itpa(
-        transaction_id, auth_key_ITPA_provider, len(groups["all_groups"]), groups["infected_group_ids"], "http://locationprovider1.com", "http://itpa.com"
-    ).text)
+        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "http://locationprovider1.com", "http://itpa.com"
+    ))
 
-    keys2 = json.loads(requestKeysToITPA.key_request_ha_itpa(
-        transaction_id, auth_key_ITPA_provider, len(groups["all_groups"]), groups["infected_group_ids"], "http://locationprovider2.com", "http://itpa.com"
-    ).text)
+    #keys2 = json.loads(requestKeysToITPA.key_request_ha_itpa(
+    #    transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "http://locationprovider2.com", "http://itpa.com"
+    #))
 
-    keys3 = json.loads(requestKeysToITPA.key_request_ha_itpa(
-        transaction_id, auth_key_ITPA_provider, len(groups["all_groups"]), groups["infected_group_ids"], "http://locationprovider3.com", "http://itpa.com"
-    ).text)
+    #keys3 = json.loads(requestKeysToITPA.key_request_ha_itpa(
+    #    transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "http://locationprovider3.com", "http://itpa.com"
+    #))
 
     print("-"*40)
     print("Decryption")
 
     id_list = process_requests(keys1, contact_tr_reply1)
-    id_list = id_list + process_requests(keys2, contact_tr_reply2)
-    id_list = id_list + process_requests(keys3, contact_tr_reply3)
+    #id_list = id_list + process_requests(keys2, contact_tr_reply2)
+    #id_list = id_list + process_requests(keys3, contact_tr_reply3)
         
     print("-"*40)
     print("IDs to notify")
