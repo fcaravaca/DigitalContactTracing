@@ -1,12 +1,12 @@
 const  got = require('got');
-const { HttpProxyAgent } = require('hpagent')
+const { HttpsProxyAgent } = require('hpagent')
 
 var signatureUtility = require("../signatureUtility")
 
 const urls = {
-    "LP1": "http://locationprovider1.com",
-    "LP2": "http://locationprovider2.com",
-    "LP3": "http://locationprovider3.com",
+    "LP1": "https://locationprovider1.com",
+    "LP2": "https://locationprovider2.com",
+    "LP3": "https://locationprovider3.com",
 }
 
 async function requestKeys(transaction_ID, LP_ID, useProxy){
@@ -17,8 +17,9 @@ async function requestKeys(transaction_ID, LP_ID, useProxy){
     information = {json : {info: information,  signature: signature_message, id: "ITPA"}}
 
     if(useProxy){
+        process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; // This will avoid verifying the SSL ceritificate
         information["agent"] = {
-            http: new HttpProxyAgent({
+            https: new HttpsProxyAgent({
                 keepAlive: true,
                 keepAliveMsecs: 1000,
                 maxSockets: 256,

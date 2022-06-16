@@ -4,8 +4,11 @@ import uuid
 import encryptSignMessages
 import json 
 
-def mobile_id_request(n, transaction_id, id_provider_url):
+def mobile_id_request(n, transaction_id, id_provider_url, verifySLL):
     
+    if not verifySLL:
+        requests.urllib3.disable_warnings()
+
     transaction_id = str(transaction_id) # Force string
 
     url = id_provider_url + '/mobileIDs'
@@ -17,7 +20,7 @@ def mobile_id_request(n, transaction_id, id_provider_url):
     print("Requested data:", request_data, "\n")
     signature = encryptSignMessages.get_signature(request_data, "../../DevelopmentTestKeys/HA.pem")
     
-    response = requests.post(url, json = {"id": "HA", "info": (request_data), "signature": signature})
+    response = requests.post(url, json = {"id": "HA", "info": (request_data), "signature": signature}, verify=verifySLL)
     response_data = json.loads(response.text)
 
     valid_signature = encryptSignMessages.check_signature(
@@ -37,4 +40,4 @@ if __name__ == "__main__":
     transaction_id = str(uuid.uuid4())
     auth_key_ID_provider = "key"
 
-    mobile_id_request(6, transaction_id, "http://idprovider.com")
+    mobile_id_request(6, transaction_id, "https://idprovider.com", False)

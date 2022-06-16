@@ -5,9 +5,12 @@ import uuid
 import encryptSignMessages
 import json
 
-def contact_tracing(transaction_id, groups, LP_url, LP_pub):
+def contact_tracing(transaction_id, groups, LP_url, LP_pub, verifySLL):
     
     transaction_id = str(transaction_id) # Force string
+
+    if not verifySLL:
+        requests.urllib3.disable_warnings()
 
     url = LP_url + '/contactTracingRequest'
     request_data = {
@@ -17,7 +20,7 @@ def contact_tracing(transaction_id, groups, LP_url, LP_pub):
     signature = encryptSignMessages.get_signature(request_data, "../../DevelopmentTestKeys/HA.pem")
 
     print("Requested data:", request_data, "\n")
-    response = requests.post(url, json = {"id": "HA", "info": (request_data), "signature": signature})
+    response = requests.post(url, json = {"id": "HA", "info": (request_data), "signature": signature}, verify=verifySLL)
     print(response)
     response_data = json.loads(response.text)
     
@@ -79,4 +82,4 @@ if __name__ == "__main__":
 
     print("Infected groups:", groups["infected_group_ids"])
 
-    contact_tracing(transaction_id, groups["all_groups"], "http://locationprovider1.com", "../../DevelopmentTestKeys/LP1_public.pem")
+    contact_tracing(transaction_id, groups["all_groups"], "https://locationprovider1.com", "../../DevelopmentTestKeys/LP1_public.pem")

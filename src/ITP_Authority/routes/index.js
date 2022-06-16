@@ -92,7 +92,7 @@ router.post('/keysRequest', function(req, res, next) {
           "status": "error"
         }
         sendInformation(information, res)
-        db.saveTransactionResult(info.transaction_ID, HA_ip,  info.LP_ID, err.toString().substring(0,255))
+        db.saveTransactionResult(info.transaction_ID, id,  info.LP_ID, err.toString().substring(0,255))
       })
     }).catch(err => {
       console.log(err)

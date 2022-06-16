@@ -2,8 +2,11 @@ import requests
 import encryptSignMessages
 import json 
 
-def key_request_ha_itpa(transaction_id, num_groups, infected_groups, LP_ID, ITPA_url):
+def key_request_ha_itpa(transaction_id, num_groups, infected_groups, LP_ID, ITPA_url, verifySLL):
     
+    if not verifySLL:
+        requests.urllib3.disable_warnings()
+
     transaction_id = str(transaction_id) # Force string
 
     url = ITPA_url + '/keysRequest'
@@ -17,7 +20,7 @@ def key_request_ha_itpa(transaction_id, num_groups, infected_groups, LP_ID, ITPA
     print("Requested data:", request_data, "\n")
     signature = encryptSignMessages.get_signature(request_data, "../../DevelopmentTestKeys/HA.pem")
     
-    response = requests.post(url, json = {"id": "HA", "info": (request_data), "signature": signature})
+    response = requests.post(url, json = {"id": "HA", "info": (request_data), "signature": signature}, verify=verifySLL)
     response_data = json.loads(response.text)
 
     valid_signature = encryptSignMessages.check_signature(

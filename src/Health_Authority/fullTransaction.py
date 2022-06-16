@@ -50,7 +50,7 @@ if __name__ == "__main__":
     print("-"*40)
     print("Requesting Mobile IDs")
     print("-"*40)
-    non_infected_phones = mobileIDsRequest.mobile_id_request(11*len(infected_phones), transaction_id, "http://idprovider.com")
+    non_infected_phones = mobileIDsRequest.mobile_id_request(11*len(infected_phones), transaction_id, "https://idprovider.com", False)
 
     print("-"*40)
     print("Requesting Contact traicing IDs")
@@ -60,15 +60,15 @@ if __name__ == "__main__":
     print("Infected groups:", groups["infected_group_ids"])
 
     contact_tr_reply1 = contactTracingRequest.contact_tracing(
-        transaction_id, groups["all_groups"], "http://locationprovider1.com", "../../DevelopmentTestKeys/LP1_public.pem"
+        transaction_id, groups["all_groups"], "https://locationprovider1.com", "../../DevelopmentTestKeys/LP1_public.pem", False
     )
 
     contact_tr_reply2 = contactTracingRequest.contact_tracing(
-        transaction_id, groups["all_groups"], "http://locationprovider2.com", "../../DevelopmentTestKeys/LP2_public.pem"
+        transaction_id, groups["all_groups"], "https://locationprovider2.com", "../../DevelopmentTestKeys/LP2_public.pem", False
     )
 
     contact_tr_reply3 = contactTracingRequest.contact_tracing(
-        transaction_id, groups["all_groups"], "http://locationprovider3.com", "../../DevelopmentTestKeys/LP3_public.pem"
+        transaction_id, groups["all_groups"], "https://locationprovider3.com", "../../DevelopmentTestKeys/LP3_public.pem", False
     )
 
     print("-"*40)
@@ -76,15 +76,15 @@ if __name__ == "__main__":
     print("-"*40)
 
     keys1 = requestKeysToITPA.key_request_ha_itpa(
-        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "LP1", "http://itpa.com"
+        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "LP1", "https://itpa.com", False
     )
 
     keys2 = requestKeysToITPA.key_request_ha_itpa(
-        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "LP2", "http://itpa.com"
+        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "LP2", "https://itpa.com", False
     )
 
     keys3 = requestKeysToITPA.key_request_ha_itpa(
-        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "LP3", "http://itpa.com"
+        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "LP3", "https://itpa.com", False
     )
 
     print("-"*40)
