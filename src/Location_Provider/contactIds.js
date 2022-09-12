@@ -1,16 +1,25 @@
 var CryptoJS = require("crypto-js");
 const crypto = require('crypto');
 const db = require('./conectorDB.js')
-  
+const csv = require('csv-parser');
+const fs = require('fs');
+
 // Aggreagated function to get the contact of N groups
 async function getContactIds(groups, transaction_ID, health_authority){
-    let contact_groups = groups.map((group) => {
-        return {
-            "group_id": group.group_id,
-            "contact_ids": getContactsOfGroup(group.ids)
-        }
 
-    });
+    let contact_groups = []
+
+    for(let i = 0; i < groups.length; i ++){
+        let contact_ids = await getContactsOfGroup(groups[i].ids)
+        contact_groups.push(
+            {
+                "group_id": groups[i].group_id,
+                "contact_ids": contact_ids
+            }
+        )
+    }
+    console.log(groups)
+    console.log(contact_groups)
 
     return await encryptGroups(contact_groups, transaction_ID, health_authority)
 }
@@ -40,12 +49,12 @@ async function encryptGroups(groups, transaction_ID, health_authority){
 
 
 // Get the aggregated ids of a contact group
-function getContactsOfGroup(ids){
+async function getContactsOfGroup(ids){
 
     let contacts = []
-    ids.forEach(id =>{
-        contacts = contacts.concat(getContactsOfId(id))
-    });
+    for(let i = 0; i < ids.length; i++){
+        contacts = contacts.concat(await getContactsOfId(ids[i]))
+    }
 
     const non_repeated_contacts = [...new Set(contacts)] // This will remove a repeated ID
 
@@ -55,6 +64,19 @@ function getContactsOfGroup(ids){
 // Get the contact IDs from an unique ID -- This will be the contact tracing alg.
 // Right now it only generates a random amount of phones
 function getContactsOfId(id){
+    return new Promise((resolve, reject) => {
+        fs.createReadStream('contacts.csv')
+        .pipe(csv({ escape: '\\' }))
+        .on('data', (row) => {
+            if(row.id.toString() === id.toString()){
+                resolve(JSON.parse(row.contacts.split('"')[1].replaceAll("'","")))
+                return
+            }
+        })
+        .on('end', () => {
+            resolve(null)
+        });
+    })
     let contacts = generateRandomNumbers(Math.floor((Math.random()*3) + 1))
     return contacts
 }

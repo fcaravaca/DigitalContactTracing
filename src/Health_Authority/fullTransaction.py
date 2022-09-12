@@ -39,8 +39,7 @@ def process_requests(keys, contact_tr_reply):
 
 if __name__ == "__main__":
     transaction_id = str(uuid.uuid4())
-    infected_phones = ["+34 665 815 328","+34 625 939 653","+34 695 860 912","+34 649 069 543",
-                       "+34 635 870 176","+34 603 184 059","+34 696 154 033","+34 610 367 133"]
+    infected_phones = ["299", "298"]
 
     max_group_size = 4
 
@@ -98,12 +97,12 @@ if __name__ == "__main__":
     print("IDs to notify")
     print("-"*40)
     
-    result = [] 
+    result = list()
     for i in id_list: 
         if i not in result: 
             result.append(i) 
     
-    for id in result: 
-        print(id)
+
+    print(len(result), "contacts: ", result)
     print("-"*40)
 
