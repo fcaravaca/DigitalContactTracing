@@ -13,6 +13,7 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: password
       MYSQL_HOST: db
+      HTTPS: $DCT_HTTPS
     depends_on:
       - db
     restart: on-failure
