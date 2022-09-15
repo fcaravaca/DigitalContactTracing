@@ -63,7 +63,7 @@ if __name__ == "__main__":
     print("-"*40)
     print("Requesting Mobile IDs")
     print("-"*40)
-    non_infected_phones = mobileIDsRequest.mobile_id_request(11*len(infected_phones), transaction_id, IDPURL, False)
+    non_infected_phones = mobileIDsRequest.mobile_id_request(1100*len(infected_phones), transaction_id, IDPURL, False)
 
     print("-"*40)
     print("Requesting Contact traicing IDs")
