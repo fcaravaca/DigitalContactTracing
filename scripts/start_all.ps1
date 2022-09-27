@@ -1,4 +1,4 @@
-$env:DCT_HTTPS="false"
+$env:DCT_HTTPS="true"
 echo $env:DCT_HTTPS > ..\src\Health_authority\https.env
 
 cd ..\src\ID_Provider

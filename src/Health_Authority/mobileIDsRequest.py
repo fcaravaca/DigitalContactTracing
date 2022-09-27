@@ -17,7 +17,7 @@ def mobile_id_request(n, transaction_id, id_provider_url, verifySLL):
         "amount": n
     }
 
-    print("Requested data:", request_data, "\n")
+    #print("Requested data:", request_data, "\n")
     signature = encryptSignMessages.get_signature(request_data, "../../DevelopmentTestKeys/HA.pem")
     
     response = requests.post(url, json = {"id": "HA", "info": (request_data), "signature": signature}, verify=verifySLL)
@@ -30,7 +30,7 @@ def mobile_id_request(n, transaction_id, id_provider_url, verifySLL):
     ) 
 
     if valid_signature:
-        print("Response:", response_data["info"])
+        #print("Response:", response_data["info"])
         return response_data["info"]
     else:
         return None

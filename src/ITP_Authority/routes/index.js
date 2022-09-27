@@ -27,7 +27,6 @@ router.post('/keysRequest', function(req, res, next) {
   const signature = req.body.signature
   const id = req.body.id
 
-  console.log(info, signature, id)
   
   if(!info || !signature || !id){
     res.status(401)

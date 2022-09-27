@@ -27,7 +27,7 @@ app.set('port', port);
 }
 
 var useHttps = process.env.HTTPS === "" || process.env.HTTPS === "true"
-console.log("Using HTTPS?", useHttps)
+
 var server
 if(useHttps){
   server = https.createServer(httpsOptions, app);

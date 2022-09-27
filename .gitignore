@@ -102,3 +102,5 @@ dist
 
 # Python
 __pycache__
+
+*.csv

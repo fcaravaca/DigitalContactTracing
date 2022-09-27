@@ -15,7 +15,6 @@ function generateSignature(text, ownPrivateKey){
 
 
 function checkSignature(text, signature, theirPublicKey){
-    console.log(text, signature, console.log(theirPublicKey))
     const buffer = Buffer.from(text).toString("base64")
     const publicKey = fs.readFileSync(path.resolve(theirPublicKey), "utf8");
 
@@ -24,7 +23,6 @@ function checkSignature(text, signature, theirPublicKey){
           key: publicKey,
         }, Buffer.from(signature, "base64")
     );
-    console.log("Signature:", isVerified)
     return isVerified
 }
 

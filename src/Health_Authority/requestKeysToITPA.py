@@ -17,7 +17,7 @@ def key_request_ha_itpa(transaction_id, num_groups, infected_groups, LP_ID, ITPA
         "LP_ID": LP_ID
     }
 
-    print("Requested data:", request_data, "\n")
+    #print("Requested data:", request_data, "\n")
     signature = encryptSignMessages.get_signature(request_data, "../../DevelopmentTestKeys/HA.pem")
     
     response = requests.post(url, json = {"id": "HA", "info": (request_data), "signature": signature}, verify=verifySLL)
@@ -29,7 +29,7 @@ def key_request_ha_itpa(transaction_id, num_groups, infected_groups, LP_ID, ITPA
         "../../DevelopmentTestKeys/ITPA_public.pem"
     )   
     if valid_signature:
-        print("Response:", response_data["info"])
+        #print("Response:", response_data["info"])
         return response_data["info"]
     else:
         return None

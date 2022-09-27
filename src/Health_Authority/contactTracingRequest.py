@@ -19,9 +19,9 @@ def contact_tracing(transaction_id, groups, LP_url, LP_pub, verifySLL):
     }
     signature = encryptSignMessages.get_signature(request_data, "../../DevelopmentTestKeys/HA.pem")
 
-    print("Requested data:", request_data, "\n")
+    #print("Requested data:", request_data, "\n")
     response = requests.post(url, json = {"id": "HA", "info": (request_data), "signature": signature}, verify=verifySLL)
-    print(response)
+    #print(response)
     response_data = json.loads(response.text)
     
     valid_signature = encryptSignMessages.check_signature(
@@ -31,7 +31,7 @@ def contact_tracing(transaction_id, groups, LP_url, LP_pub, verifySLL):
     )   
 
     if valid_signature:
-        print("Response:", response_data["info"])
+        #print("Response:", response_data["info"])
         return response_data["info"]
     else:
         return None
@@ -80,6 +80,6 @@ if __name__ == "__main__":
 
     groups = create_groups(infected_phones, non_infected_phones, 3)
 
-    print("Infected groups:", groups["infected_group_ids"])
+    #print("Infected groups:", groups["infected_group_ids"])
 
     contact_tracing(transaction_id, groups["all_groups"], "https://locationprovider1.com", "../../DevelopmentTestKeys/LP1_public.pem")
