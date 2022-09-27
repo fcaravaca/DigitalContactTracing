@@ -9,53 +9,73 @@ async function getContactIds(groups, transaction_ID, health_authority){
 
     let contact_groups = []
 
-    for(let i = 0; i < groups.length; i ++){
-        let contact_ids = await getContactsOfGroup(groups[i].ids)
-        contact_groups.push(
-            {
-                "group_id": groups[i].group_id,
-                "contact_ids": contact_ids
-            }
-        )
-    }
-    console.log(groups)
-    console.log(contact_groups)
+    return new Promise((resolve, reject) => {
+        let promises = []
 
-    return await encryptGroups(contact_groups, transaction_ID, health_authority)
+        for(let i = 0; i < groups.length; i++){
+            promises.push(getContactsOfGroup(groups[i].ids)) 
+        }
+
+        Promise.all(promises).then(results => {
+            for(let i = 0; i < groups.length; i ++){
+                contact_groups.push(
+                    {
+                        "group_id": groups[i].group_id,
+                        "contact_ids": results[i]
+                    }
+                )
+            }
+            encryptGroups(contact_groups, transaction_ID, health_authority).then(r =>{
+                resolve(r)
+            })
+        })
+    })
 }
 
-async function encryptGroups(groups, transaction_ID, health_authority){
+function encryptGroups(groups, transaction_ID, health_authority){
+    return new Promise((resolve) => {
+        const encrypted_groups = []
+        const dbPromises = []
+        for(let group of groups){
 
-    const encrypted_groups = []
-    for(let group of groups){
+            const key = crypto.randomBytes(32).toString('hex') // 256 bit key
+            const iv = crypto.randomBytes(16).toString('hex')
 
-        const key = crypto.randomBytes(32).toString('hex') // 256 bit key
-        const iv = crypto.randomBytes(16).toString('hex')
+            dbPromises.push(
+                db.saveKeys(transaction_ID, health_authority, group.group_id, key, iv)
+            )
+            var encrypted_ids = CryptoJS.AES.encrypt(JSON.stringify(group.contact_ids), CryptoJS.enc.Hex.parse(key), 
+                {mode: CryptoJS.mode.CBC,padding: CryptoJS.pad.Pkcs7,iv: CryptoJS.enc.Hex.parse(iv)}).toString()
 
-        await db.saveKeys(transaction_ID, health_authority, group.group_id, key, iv)
+            encrypted_groups.push({
+                "group_id": group.group_id,
+                "contact_ids": encrypted_ids
+            })
 
-        var encrypted_ids = CryptoJS.AES.encrypt(JSON.stringify(group.contact_ids), CryptoJS.enc.Hex.parse(key), 
-            {mode: CryptoJS.mode.CBC,padding: CryptoJS.pad.Pkcs7,iv: CryptoJS.enc.Hex.parse(iv)}).toString()
+        }
 
-        encrypted_groups.push({
-            "group_id": group.group_id,
-            "contact_ids": encrypted_ids
+        Promise.all(dbPromises).then(r => {
+            resolve(encrypted_groups)
         })
-
-    }
-
-    return encrypted_groups
+    })
 }
 
 
 // Get the aggregated ids of a contact group
-async function getContactsOfGroup(ids){
+function getContactsOfGroup(ids){
+    return new Promise((resolve, reject) => {
+        let contacts = []
+        let promises = []
 
-    let contacts = []
-    for(let i = 0; i < ids.length; i++){
-        contacts = contacts.concat(await getContactsOfId(ids[i]))
-    }
-
+        for(let i = 0; i < ids.length; i++){
+            promises.push(getContactsOfId(ids[i])) 
+        }
+        
+        Promise.all(promises).then(results => {
+            contacts = results.reduce((accu, next) => accu.concat(next))
+            resolve([...new Set(contacts)])
+        })
+    })
     const non_repeated_contacts = [...new Set(contacts)] // This will remove a repeated ID
 
     return non_repeated_contacts
@@ -65,6 +85,9 @@ async function getContactsOfGroup(ids){
 // Right now it only generates a random amount of phones
 function getContactsOfId(id){
     return new Promise((resolve, reject) => {
+        let contacts = generateRandomNumbers(Math.floor((Math.random()*3) + 1))
+        resolve(contacts);
+        return; 
         fs.createReadStream('contacts.csv')
         .pipe(csv({ escape: '\\' }))
         .on('data', (row) => {
@@ -77,8 +100,6 @@ function getContactsOfId(id){
             resolve(null)
         });
     })
-    let contacts = generateRandomNumbers(Math.floor((Math.random()*3) + 1))
-    return contacts
 }
 
 // This is copy-paste to generate random phones, this can be deleated when getContactsOfId get a new 
