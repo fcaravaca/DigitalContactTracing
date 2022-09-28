@@ -1,7 +1,7 @@
 import requests
 import random
 import uuid
-
+import base64
 import encryptSignMessages
 import json
 
@@ -17,6 +17,7 @@ def contact_tracing(transaction_id, groups, LP_url, LP_pub, verifySLL):
         "transaction_ID": transaction_id,
         "groups": groups
     }
+    request_data = base64.b64encode(json.dumps(request_data).encode()).decode("utf-8")
     signature = encryptSignMessages.get_signature(request_data, "../../DevelopmentTestKeys/HA.pem")
 
     #print("Requested data:", request_data, "\n")
@@ -32,7 +33,7 @@ def contact_tracing(transaction_id, groups, LP_url, LP_pub, verifySLL):
 
     if valid_signature:
         #print("Response:", response_data["info"])
-        return response_data["info"]
+        return json.loads(base64.b64decode(response_data["info"]))
     else:
         return None
 
@@ -82,4 +83,4 @@ if __name__ == "__main__":
 
     #print("Infected groups:", groups["infected_group_ids"])
 
-    contact_tracing(transaction_id, groups["all_groups"], "https://locationprovider1.com", "../../DevelopmentTestKeys/LP1_public.pem")
+    print(contact_tracing(transaction_id, groups["all_groups"], "http://locationprovider1.com", "../../DevelopmentTestKeys/LP1_public.pem", False))

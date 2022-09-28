@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
 
 router.post('/mobileIDs', function(req, res, next) {
 
-  const info = req.body.info
+  let info = req.body.info
   const signature = req.body.signature
   const id = req.body.id
 
@@ -21,11 +21,11 @@ router.post('/mobileIDs', function(req, res, next) {
     res.send("Unauthrorized")
     return;
   }
-
-  if(signatureUtility.checkSignature(JSON.stringify(info), signature, id + "_public.pem")){
+  if(signatureUtility.checkSignature(info, signature, id + "_public.pem")){
+    info = JSON.parse(Buffer.from(info, "base64").toString())
     const n = parseInt(info.amount)
 
-    if(n < 2 || info.transaction_ID === null){
+    if(n < 2 || !info.transaction_ID){
       res.status(400)
       res.send("Bad Request")
     }else{
@@ -38,10 +38,12 @@ router.post('/mobileIDs', function(req, res, next) {
         "ids": ids
       };
 
-      const signature_message = signatureUtility.generateSignature(JSON.stringify(information), "IDP.pem")
+      let response_info = Buffer.from(JSON.stringify(information)).toString("base64")
+
+      const signature_message = signatureUtility.generateSignature(response_info, "IDP.pem")
       connectorDB.registerRequest(info.transaction_ID, id, n).catch(err => console.log(err))
 
-    res.send({info: information, id: "IDP", signature: signature_message})
+    res.send({info: response_info, id: "IDP", signature: signature_message})
   }
   }else{
     console.log("Not valid signature")

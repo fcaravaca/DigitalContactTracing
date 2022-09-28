@@ -3,6 +3,7 @@ import uuid
 
 import encryptSignMessages
 import json 
+import base64
 
 def mobile_id_request(n, transaction_id, id_provider_url, verifySLL):
     
@@ -16,7 +17,7 @@ def mobile_id_request(n, transaction_id, id_provider_url, verifySLL):
         "transaction_ID": transaction_id,
         "amount": n
     }
-
+    request_data = base64.b64encode(json.dumps(request_data).encode()).decode("utf-8")
     #print("Requested data:", request_data, "\n")
     signature = encryptSignMessages.get_signature(request_data, "../../DevelopmentTestKeys/HA.pem")
     
@@ -31,7 +32,7 @@ def mobile_id_request(n, transaction_id, id_provider_url, verifySLL):
 
     if valid_signature:
         #print("Response:", response_data["info"])
-        return response_data["info"]
+        return json.loads(base64.b64decode(response_data["info"]))
     else:
         return None
 
@@ -40,4 +41,4 @@ if __name__ == "__main__":
     transaction_id = str(uuid.uuid4())
     auth_key_ID_provider = "key"
 
-    mobile_id_request(6, transaction_id, "https://idprovider.com", False)
+    print(mobile_id_request(6, transaction_id, "http://idprovider.com", False))

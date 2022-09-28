@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
 
 router.post('/contactTracingRequest', async function(req, res, next) {
 
-  const info = req.body.info
+  let info = req.body.info
   const signature = req.body.signature
   const id = req.body.id
 
@@ -21,8 +21,9 @@ router.post('/contactTracingRequest', async function(req, res, next) {
     res.send("Unauthrorized")
     return;
   }
-  if(signatureUtility.checkSignature(JSON.stringify(info), signature, id + "_public.pem")){
-    if(info.transaction_ID === null){
+  if(signatureUtility.checkSignature(info, signature, id + "_public.pem")){
+    info = JSON.parse(Buffer.from(info, "base64").toString())
+    if(!info.transaction_ID){
       res.status(400)
       res.send("Bad Request")
     }else{
@@ -31,8 +32,9 @@ router.post('/contactTracingRequest', async function(req, res, next) {
         "transaction_ID": info.transaction_ID,
         "groups":groupIds
       };
-      const signature_message = signatureUtility.generateSignature(JSON.stringify(information), "private.pem")
-      res.send({info: information, id: process.env.ID, signature: signature_message})
+      let response_info = Buffer.from(JSON.stringify(information)).toString("base64")
+      const signature_message = signatureUtility.generateSignature(response_info, "private.pem")
+      res.send({info: response_info, id: process.env.ID, signature: signature_message})
     }
   }else{
     console.log("Not valid signature")
@@ -42,11 +44,11 @@ router.post('/contactTracingRequest', async function(req, res, next) {
 
 router.post('/keysRequest', function(req, res, next) {
 
-  const info = req.body.info
+  let info = req.body.info
   const signature = req.body.signature
   const id = req.body.id
 
-  //console.log(info, signature, id)
+  console.log(info, signature, id)
 
   if(!info || !signature || !id){
     res.status(401)
@@ -54,15 +56,17 @@ router.post('/keysRequest', function(req, res, next) {
     return;
   }
 
-  if(signatureUtility.checkSignature(JSON.stringify(info), signature, id + "_public.pem")){
+  if(signatureUtility.checkSignature(info, signature, id + "_public.pem")){
+    info = JSON.parse(Buffer.from(info, "base64").toString())
     if(info.transaction_ID === null){
       res.status(400)
       res.send("Bad Request")
     }else{
       db.getKeys(info.transaction_ID).then(result => {
         information = {"transaction_ID": info.transaction_ID, "keys": result}
-        const signature_message = signatureUtility.generateSignature(JSON.stringify(information), "private.pem")
-        res.send({info: information, id: process.env.ID, signature: signature_message})
+        let response_info = Buffer.from(JSON.stringify(information)).toString("base64")
+        const signature_message = signatureUtility.generateSignature(response_info, "private.pem")
+        res.send({info: response_info, id: process.env.ID, signature: signature_message})
       }).catch(err => {
         console.log(err)
         res.send({"transaction_ID": info.transaction_ID, "status": err})

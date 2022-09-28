@@ -16,14 +16,15 @@ router.post('/keysRequest', function(req, res, next) {
 
   function sendInformation(information, res){
     try{
-      const signature_message = signatureUtility.generateSignature(JSON.stringify(information), "ITPA.pem")
-      res.send({info: information, id: "ITPA", signature: signature_message})
+      let response_info = Buffer.from(JSON.stringify(information)).toString("base64")
+      const signature_message = signatureUtility.generateSignature(response_info, "ITPA.pem")
+      res.send({info: response_info, id: "ITPA", signature: signature_message})
     }catch(err){
       console.log(err)
     }
   }
   
-  const info = req.body.info
+  let info = req.body.info
   const signature = req.body.signature
   const id = req.body.id
 
@@ -33,9 +34,10 @@ router.post('/keysRequest', function(req, res, next) {
     res.send("Unauthrorized")
     return;
   }
-  if(signatureUtility.checkSignature(JSON.stringify(info), signature, id + "_public.pem")){
-
-  if(info.transaction_ID === null){
+  if(signatureUtility.checkSignature(info, signature, id + "_public.pem")){
+    info = JSON.parse(Buffer.from(info, "base64").toString())
+    console.log(info)
+  if(!info.transaction_ID){
     res.status(400)
     res.send("Bad Request")
   }else{
@@ -43,7 +45,7 @@ router.post('/keysRequest', function(req, res, next) {
     db.saveTransaction(info.transaction_ID, id,  info.LP_ID, info.total_groups, info.infected_groups.length).then(()=>{
       keyRequest.requestKeys(info.transaction_ID, info.LP_ID, true).then(result =>{
         let reason = ""
-        result = result.info
+        result = JSON.parse(Buffer.from(result.info, "base64").toString())
         if(result.keys.length !== info.total_groups){ //Bad request
           reason = "Bad request: wrong num of groups"
           res.status(400)

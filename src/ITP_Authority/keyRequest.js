@@ -11,10 +11,10 @@ const urls = {
 
 async function requestKeys(transaction_ID, LP_ID, useProxy){
 
-    let information = {id: "ITPA", "transaction_ID": transaction_ID}
-
-    const signature_message = signatureUtility.generateSignature(JSON.stringify(information), "ITPA.pem")
-    information = {json : {info: information,  signature: signature_message, id: "ITPA"}}
+    let information_value = {id: "ITPA", "transaction_ID": transaction_ID}
+    information_value = Buffer.from(JSON.stringify(information_value)).toString("base64")
+    const signature_message = signatureUtility.generateSignature(information_value, "ITPA.pem")
+    information = {json : {info: information_value,  signature: signature_message, id: "ITPA"}}
 
     if(useProxy){
         if(useHttps){
@@ -37,7 +37,7 @@ async function requestKeys(transaction_ID, LP_ID, useProxy){
     const url_request = (useHttps ? "https://" : "http://") + urls[LP_ID] + '/keysRequest'
 
     const response = await got.post(url_request , information).json().catch(err => console.log(err));
-    const isValidSignature = signatureUtility.checkSignature(JSON.stringify(response.info), response.signature, response.id + "_public.pem")
+    const isValidSignature = signatureUtility.checkSignature(response.info, response.signature, response.id + "_public.pem")
     if(isValidSignature){
         return response;
     }else{

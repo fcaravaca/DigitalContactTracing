@@ -1,7 +1,7 @@
 import requests
 import encryptSignMessages
 import json 
-
+import base64
 def key_request_ha_itpa(transaction_id, num_groups, infected_groups, LP_ID, ITPA_url, verifySLL):
     
     if not verifySLL:
@@ -16,13 +16,13 @@ def key_request_ha_itpa(transaction_id, num_groups, infected_groups, LP_ID, ITPA
         "infected_groups": infected_groups,
         "LP_ID": LP_ID
     }
-
+    request_data = base64.b64encode(json.dumps(request_data).encode()).decode("utf-8")
     #print("Requested data:", request_data, "\n")
     signature = encryptSignMessages.get_signature(request_data, "../../DevelopmentTestKeys/HA.pem")
     
     response = requests.post(url, json = {"id": "HA", "info": (request_data), "signature": signature}, verify=verifySLL)
     response_data = json.loads(response.text)
-
+    
     valid_signature = encryptSignMessages.check_signature(
         response_data["info"], 
         response_data["signature"],
@@ -30,7 +30,7 @@ def key_request_ha_itpa(transaction_id, num_groups, infected_groups, LP_ID, ITPA
     )   
     if valid_signature:
         #print("Response:", response_data["info"])
-        return response_data["info"]
+        return json.loads(base64.b64decode(response_data["info"]))
     else:
         return None
 
