@@ -37,12 +37,39 @@ def contact_tracing(transaction_id, groups, LP_url, LP_pub, verifySLL):
     else:
         return None
 
-def create_groups(infected_phones, non_infected_phones, max_group_size):
+def fill_groups(phones, number_of_groups):
+    groups = []
+    for l in range(0,number_of_groups):
+        groups.append([])
+    amount = 0
+    for phone in phones:
+        if amount < 2*number_of_groups: # Minimun of 2 phones per group
+            index = amount
+            if index >= number_of_groups:
+                index-=number_of_groups
+        else: # Then assign the rest randomly
+            index = random.randint(0, number_of_groups-1)
+        groups[index].append(phone)
+        amount += 1
+
+    return groups
+
+def create_groups(infected_phones, non_infected_phones, number_of_groups, mode="L"):
 
     # Need to check if an infected phone in the non infected array
+    if mode == "L":
+        L = number_of_groups
+        group_size = len(infected_phones)/L
+        K = int(len(non_infected_phones) / group_size) + L
+    else:
+        K = number_of_groups
+        group_size = (len(infected_phones) + len(non_infected_phones)) / K
+        L = int(len(infected_phones) / group_size)
+        if L == 0: 
+            L = 1
 
-    infected_phones_groups = [infected_phones[n:n+max_group_size] for n in range(0, len(infected_phones), max_group_size)]
-    non_infected_phones_groups = [non_infected_phones[n:n+max_group_size] for n in range(0, len(non_infected_phones), max_group_size)]
+    infected_phones_groups = fill_groups(infected_phones, L)
+    non_infected_phones_groups = fill_groups(non_infected_phones, K - L)
 
     all_groups = []
     infected_group_ids = []
@@ -64,13 +91,17 @@ def create_groups(infected_phones, non_infected_phones, max_group_size):
 
     return {
         "all_groups": all_groups,
-        "infected_group_ids": infected_group_ids       
+        "infected_group_ids": infected_group_ids,
+        "K": K,
+        "L": L
     }
 
+import datetime
 
 
 if __name__ == "__main__":
     transaction_id = str(uuid.uuid4())
+    start_date = datetime.datetime.now()
 
     infected_phones = ["+34 665 815 328","+34 625 939 653","+34 695 860 912"]
     non_infected_phones = ["+34 680 324 855","+34 611 215 353","+34 684 469 808","+34 636 098 607",
@@ -78,9 +109,13 @@ if __name__ == "__main__":
                            "+34 677 557 211","+34 634 539 405","+34 625 719 749","+34 656 429 322",
                            "+34 669 950 633","+34 697 772 263","+34 666 037 833","+34 663 235 390",
                            "+34 644 736 845","+34 686 931 289"]
+    infected_phones = ["299", "298", "297", "296", "295", "294", "293", "292", "291", "290"] 
 
-    groups = create_groups(infected_phones, non_infected_phones, 3)
+    groups = create_groups(infected_phones*10000, infected_phones*100000, int(len(infected_phones*1000)/10), "L")
 
+    execution_time = str(datetime.datetime.now() - start_date)
+    print(execution_time)
+    #print(groups)
     #print("Infected groups:", groups["infected_group_ids"])
-
+    exit()
     print(contact_tracing(transaction_id, groups["all_groups"], "http://locationprovider1.com", "../../DevelopmentTestKeys/LP1_public.pem", False))

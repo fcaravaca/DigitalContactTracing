@@ -1,9 +1,6 @@
 function getMobileIds(n){
     // This should a request to some kind of DB instead of the random function
-    let maximum = 299
-    let minimum = 0
-    return Array.from(Array(n)).map(() => Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
-    //return generateRandomNumbers(n)
+    return generateRandomNumbers(n)
 }
 
 

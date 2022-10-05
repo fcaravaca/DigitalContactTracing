@@ -53,7 +53,7 @@ def process_requests(keys, contact_tr_reply):
     return id_list
 
 
-def transaction(infected_phones, max_group_size, numberOfNonInfectedPerInfected, allowPrint=True):
+def transaction(infected_phones, numberOfNonInfectedPerInfected, number_of_groups, mode="L", allowPrint=True):
 
     transaction_id = str(uuid.uuid4())
     #infected_phones = ["299", "298", "297", "296", "295"] * 20 #, "294", "293", "292", "291", "290"]
@@ -73,8 +73,9 @@ def transaction(infected_phones, max_group_size, numberOfNonInfectedPerInfected,
         print("-"*40)
         print("Requesting Contact traicing IDs")
         print("-"*40)
-    groups = contactTracingRequest.create_groups(infected_phones, non_infected_phones["ids"], max_group_size)
-
+    groups = contactTracingRequest.create_groups(infected_phones, non_infected_phones["ids"], number_of_groups, mode)
+    K = groups["K"]
+    L = groups["L"]
 
     contact_tr_reply1 = contactTracingRequest.contact_tracing(
         transaction_id, groups["all_groups"], LP1URL, "../../DevelopmentTestKeys/LP1_public.pem", False
@@ -115,11 +116,7 @@ def transaction(infected_phones, max_group_size, numberOfNonInfectedPerInfected,
     #id_list = id_list + process_requests(keys3, contact_tr_reply3)
 
 
-    
-    result = list()
-    for i in id_list: 
-        if i not in result: 
-            result.append(i) 
+    result = list(dict.fromkeys(id_list))
     
     if allowPrint:
         print("IDs to notify")
@@ -127,10 +124,10 @@ def transaction(infected_phones, max_group_size, numberOfNonInfectedPerInfected,
         print("-"*40)
         print(len(result), "contacts: ", result)
         print("-"*40)
-
+    return {"K": K, "L": L}
 
 if __name__ == "__main__":
-    infected_phones = ["299", "298", "297", "296", "295"]
+    infected_phones = ["+34 600 000 001", "+34 600 000 002", "+34 600 000 003", "+34 600 000 004", "+34 600 000 005", "+34 600 000 006", "+34 600 000 007", "+34 600 000 008", "+34 600 000 009" , "+34 600 000 010"]
     max_group_size = 5
-    numberOfNonInfectedPerInfected = 10
-    transaction(infected_phones, max_group_size, numberOfNonInfectedPerInfected)
+    numberOfNonInfectedPerInfected = 100
+    transaction(infected_phones, numberOfNonInfectedPerInfected, 1)
