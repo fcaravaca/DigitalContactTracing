@@ -17,14 +17,18 @@ function generateSignature(text, ownPrivateKey){
 
 function checkSignature(text, signature, theirPublicKey){
     const buffer = Buffer.from(text).toString("utf8")
-    const publicKey = fs.readFileSync(path.resolve(theirPublicKey), "utf8");
-
-    const isVerified = crypto.verify(
-        "sha256", buffer, {
-          key: publicKey,
-        }, Buffer.from(signature, "base64")
-    );
-    return isVerified
+    try{
+        const publicKey = fs.readFileSync(path.resolve(theirPublicKey), "utf8");
+        
+        const isVerified = crypto.verify(
+            "sha256", buffer, {
+                key: publicKey,
+            }, Buffer.from(signature, "base64")
+            );
+        return isVerified
+    }catch(err){
+        return false;
+    }
 }
 
 

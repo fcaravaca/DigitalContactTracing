@@ -14,11 +14,14 @@ router.get('/', function(req, res, next) {
 
 router.post('/keysRequest', function(req, res, next) {
 
-  function sendInformation(information, res){
+  function sendInformation(information, res, error_message=undefined){
     try{
       let response_info = Buffer.from(JSON.stringify(information)).toString("base64")
       const signature_message = signatureUtility.generateSignature(response_info, "ITPA.pem")
-      res.send({info: response_info, id: "ITPA", signature: signature_message})
+      if(error_message !== undefined){
+        res.status(400)
+      }
+      res.send({info: response_info, id: "ITPA", signature: signature_message, error_message})
     }catch(err){
       console.log(err)
     }
@@ -31,7 +34,7 @@ router.post('/keysRequest', function(req, res, next) {
   
   if(!info || !signature || !id){
     res.status(401)
-    res.send("Unauthrorized")
+    res.send({message_error: "Unauthrorized"})
     return;
   }
   if(signatureUtility.checkSignature(info, signature, id + "_public.pem")){
@@ -39,7 +42,7 @@ router.post('/keysRequest', function(req, res, next) {
     console.log(info)
   if(!info.transaction_ID){
     res.status(400)
-    res.send("Bad Request")
+    res.send({message_error: "Bad Request"})
   }else{
 
     db.saveTransaction(info.transaction_ID, id,  info.LP_ID, info.total_groups, info.infected_groups.length).then(()=>{
@@ -48,13 +51,12 @@ router.post('/keysRequest', function(req, res, next) {
         result = JSON.parse(Buffer.from(result.info, "base64").toString())
         if(result.keys.length !== info.total_groups){ //Bad request
           reason = "Bad request: wrong num of groups"
-          res.status(400)
+
           information = {
             "transaction_ID": info.transaction_ID,
-            "status": reason
           }
 
-          sendInformation(information, res)
+          sendInformation(information, res, reason)
           db.saveTransactionResult(info.transaction_ID, id,  info.LP_ID, reason)
           return;
         }
@@ -69,13 +71,12 @@ router.post('/keysRequest', function(req, res, next) {
 
         if(keys_to_send.length !== info.infected_groups.length){ // Bad request: groups not included
           reason = "Bad request: group not found"
-          res.status(400)
+
           information = {
             "transaction_ID": info.transaction_ID,
-            "status": reason
           }
-          sendInformation(information, res)
-          db.saveTransactionResult(info.transaction_ID, id,  info.LP_ID, reason)
+          sendInformation(information, res, reason)
+          db.saveTransactionResult(info.transaction_ID, id, info.LP_ID, reason)
           return;
         }
         
@@ -90,9 +91,9 @@ router.post('/keysRequest', function(req, res, next) {
         console.log(err)
         information = {
           "transaction_ID": info.transaction_ID,
-          "status": "error"
         }
-        sendInformation(information, res)
+
+        sendInformation(information, res, "error")
         db.saveTransactionResult(info.transaction_ID, id,  info.LP_ID, err.toString().substring(0,255))
       })
     }).catch(err => {
@@ -101,7 +102,7 @@ router.post('/keysRequest', function(req, res, next) {
         "transaction_ID": info.transaction_ID,
         "status": "error"
       }
-      sendInformation(information, res)
+      sendInformation(information, res, "error")
     })
     }
   }

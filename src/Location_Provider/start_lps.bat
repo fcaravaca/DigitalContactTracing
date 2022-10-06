@@ -1,5 +1,7 @@
-copy ..\..\DevelopmentTestKeys\HA_public.pem .
-copy ..\..\DevelopmentTestKeys\ITPA_public.pem .
+mkdir HAs
+mkdir ITPAs
+copy ..\..\DevelopmentTestKeys\HA_public.pem .\HAs\HA_public.pem
+copy ..\..\DevelopmentTestKeys\ITPA_public.pem .\ITPAs\ITPA_public.pem 
 copy ..\..\DevelopmentTestKeys\LP1.pem private.pem
 mkdir security
 cd security
@@ -31,6 +33,8 @@ del /Q .\security\*
 rmdir -r security
 
 del private.pem
-del HA_public.pem
-del ITPA_public.pem
+del .\HAs\HA_public.pem
+del .\ITPAs\ITPA_public.pem
+rmdir -r HAs
+rmdir -r ITPAs
 docker image prune -f

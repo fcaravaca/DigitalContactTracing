@@ -22,7 +22,11 @@ def key_request_ha_itpa(transaction_id, num_groups, infected_groups, LP_ID, ITPA
     
     response = requests.post(url, json = {"id": "HA", "info": (request_data), "signature": signature}, verify=verifySLL)
     response_data = json.loads(response.text)
-    
+    print(response_data)
+    if response.status_code != 200:
+        print(response_data["error_message"])
+        return None
+
     valid_signature = encryptSignMessages.check_signature(
         response_data["info"], 
         response_data["signature"],
@@ -38,7 +42,7 @@ def key_request_ha_itpa(transaction_id, num_groups, infected_groups, LP_ID, ITPA
 
 if __name__ == "__main__":
     transaction_id = "a6fce1b6-e91e-46f6-a7c6-1eb5e50f796b"
-    num_groups = 7
+    num_groups = 8
     infected_groups = ["eb346f68-d94c-4d8b-9b67-e644d71484b9"]
 
-    key_request_ha_itpa(transaction_id, num_groups, infected_groups, "LP_1", "http://itpa.com")
+    key_request_ha_itpa(transaction_id, num_groups, infected_groups, "LP_1", "https://itpa.com", False)
