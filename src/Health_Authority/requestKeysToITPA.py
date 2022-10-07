@@ -43,9 +43,9 @@ def key_request_ha_itpa(transaction_id, num_groups, infected_groups, LP_ID, ITPA
 if __name__ == "__main__":
     import loadConfig
 
-    transaction_id = "d77db212-1757-47c8-80a5-724780e8c584"
+    transaction_id = "3003be66-941e-432e-a8ae-69795b8e42ef"
     num_groups = 7
-    infected_groups = ["b6db67d8-2b29-4654-8f03-bf41658a1838"]
+    infected_groups = ["0353acf3-17a0-4578-9dba-6170cc81fa7a"]
     
     ITPAs = loadConfig.fill_providers_info("itp_authorities")
     LPs = loadConfig.fill_providers_info("location_providers")
