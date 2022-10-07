@@ -1,0 +1,68 @@
+{
+    "health_authorities":[
+        {
+            "private_key": "DevelopmentTestKeys/HA.pem",
+            "public_key": "DevelopmentTestKeys/HA_public.pem",
+            "id": "HA"
+        }
+    ],
+    "itp_authorities":[
+        {
+            "private_key": "DevelopmentTestKeys/ITPA.pem",
+            "public_key": "DevelopmentTestKeys/ITPA_public.pem",
+            "id": "ITPA",
+            "url": "https://itpa.com",
+            "https_cert_conf": "DevelopmentTestKeys/reqITPA.cnf",
+            "docker_compose_files": [
+                "src/ITP_Authority/docker-compose.yml"
+            ]
+        }
+    ],
+    "id_providers":[
+        {
+            "private_key": "DevelopmentTestKeys/IDP.pem",
+            "public_key": "DevelopmentTestKeys/IDP_public.pem",
+            "id": "IDP",
+            "url": "https://idprovider.com",
+            "https_cert_conf": "DevelopmentTestKeys/reqIDP.cnf",
+            "docker_compose_files": [
+                "src/ID_Provider/docker-compose.yml"
+            ]
+        }
+    ],
+    "location_providers":[
+        {
+            "private_key": "DevelopmentTestKeys/LP1.pem",
+            "public_key": "DevelopmentTestKeys/LP1_public.pem",
+            "id": "LP1",
+            "url": "https://locationprovider1.com",
+            "https_cert_conf": "DevelopmentTestKeys/reqLP1.cnf",
+            "docker_compose_files": [
+                "src/Location_Provider/docker-compose.yml",
+                "src/Location_Provider/docker-compose.lp-1.yml"
+            ]
+        },
+        {
+            "private_key": "DevelopmentTestKeys/LP2.pem",
+            "public_key": "DevelopmentTestKeys/LP2_public.pem",
+            "id": "LP2",
+            "url": "https://locationprovider2.com",
+            "https_cert_conf": "DevelopmentTestKeys/reqLP2.cnf",
+            "docker_compose_files": [
+                "src/Location_Provider/docker-compose.yml",
+                "src/Location_Provider/docker-compose.lp-2.yml"
+            ]
+        },
+        {
+            "private_key": "DevelopmentTestKeys/LP3.pem",
+            "public_key": "DevelopmentTestKeys/LP3_public.pem",
+            "id": "LP3",
+            "url": "https://locationprovider3.com",
+            "https_cert_conf": "DevelopmentTestKeys/reqLP3.cnf",
+            "docker_compose_files": [
+                "src/Location_Provider/docker-compose.yml",
+                "src/Location_Provider/docker-compose.lp-3.yml"
+            ]
+        }
+    ]
+}

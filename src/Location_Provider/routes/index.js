@@ -18,14 +18,14 @@ router.post('/contactTracingRequest', async function(req, res, next) {
 
   if(!info || !signature || !id){
     res.status(401)
-    res.send("Unauthrorized")
+    res.send({error_message: "Unauthrorized"})
     return;
   }
-  if(signatureUtility.checkSignature(info, signature, id + "_public.pem")){
+  if(signatureUtility.checkSignature(info, signature, "security/HAs/" + id + "_public.pem")){
     info = JSON.parse(Buffer.from(info, "base64").toString())
     if(!info.transaction_ID){
       res.status(400)
-      res.send("Bad Request")
+      res.send({error_message: "Bad Request"})
     }else{
       const groupIds =  await contactIds.getContactIds(info.groups, info.transaction_ID, id)
       information = {
@@ -38,7 +38,8 @@ router.post('/contactTracingRequest', async function(req, res, next) {
     }
   }else{
     console.log("Not valid signature")
-    res.send("error")
+    res.status(401)
+    res.send({error_message: "Unauthrorized"})
   }
 });
 
@@ -52,15 +53,15 @@ router.post('/keysRequest', function(req, res, next) {
 
   if(!info || !signature || !id){
     res.status(401)
-    res.send("Unauthrorized")
+    res.send({error_message: "Unauthrorized"})
     return;
   }
 
-  if(signatureUtility.checkSignature(info, signature, id + "_public.pem")){
+  if(signatureUtility.checkSignature(info, signature, "security/ITPAs/" + id + "_public.pem")){
     info = JSON.parse(Buffer.from(info, "base64").toString())
     if(info.transaction_ID === null){
       res.status(400)
-      res.send("Bad Request")
+      res.send({error_message: "Bad Request"})
     }else{
       db.getKeys(info.transaction_ID).then(result => {
         information = {"transaction_ID": info.transaction_ID, "keys": result}
@@ -75,7 +76,7 @@ router.post('/keysRequest', function(req, res, next) {
     }    
   }else{
     res.status(401)
-    res.send("Unauthrorized")
+    res.send({error_message: "Unauthrorized"})
   }
 });
 

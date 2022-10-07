@@ -37,7 +37,7 @@ async function requestKeys(transaction_ID, LP_ID, useProxy){
     const url_request = (useHttps ? "https://" : "http://") + urls[LP_ID] + '/keysRequest'
 
     const response = await got.post(url_request , information).json().catch(err => console.log(err));
-    const isValidSignature = signatureUtility.checkSignature(response.info, response.signature, response.id + "_public.pem")
+    const isValidSignature = signatureUtility.checkSignature(response.info, response.signature, "security/LPs/" + LP_ID + "_public.pem")
     if(isValidSignature){
         return response;
     }else{

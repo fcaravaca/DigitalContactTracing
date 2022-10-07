@@ -21,7 +21,7 @@ router.post('/mobileIDs', function(req, res, next) {
     res.send("Unauthrorized")
     return;
   }
-  if(signatureUtility.checkSignature(info, signature, id + "_public.pem")){
+  if(signatureUtility.checkSignature(info, signature, "security/HAs/" + id + "_public.pem")){
     info = JSON.parse(Buffer.from(info, "base64").toString())
     const n = parseInt(info.amount)
 
@@ -47,7 +47,7 @@ router.post('/mobileIDs', function(req, res, next) {
   }
   }else{
     console.log("Not valid signature")
-    res.send("error")
+    res.send({error_message: "Unathorized"})
   }
 });
 

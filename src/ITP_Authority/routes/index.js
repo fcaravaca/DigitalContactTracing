@@ -37,7 +37,7 @@ router.post('/keysRequest', function(req, res, next) {
     res.send({message_error: "Unauthrorized"})
     return;
   }
-  if(signatureUtility.checkSignature(info, signature, id + "_public.pem")){
+  if(signatureUtility.checkSignature(info, signature, "security/HAs/" + id + "_public.pem")){
     info = JSON.parse(Buffer.from(info, "base64").toString())
     console.log(info)
   if(!info.transaction_ID){
