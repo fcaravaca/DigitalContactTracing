@@ -5,20 +5,20 @@ import base64
 import encryptSignMessages
 import json
 
-def contact_tracing(transaction_id, groups, LP_url, LP_pub, verifySLL):
+def contact_tracing(transaction_id, groups, LP, private_key, verifySLL):
     
     transaction_id = str(transaction_id) # Force string
 
     if not verifySLL:
         requests.urllib3.disable_warnings()
 
-    url = LP_url + '/contactTracingRequest'
+    url = LP["url"] + '/contactTracingRequest'
     request_data = {
         "transaction_ID": transaction_id,
         "groups": groups
     }
     request_data = base64.b64encode(json.dumps(request_data).encode()).decode("utf-8")
-    signature = encryptSignMessages.get_signature(request_data, "../../DevelopmentTestKeys/HA.pem")
+    signature = encryptSignMessages.get_signature(request_data, private_key)
 
     #print("Requested data:", request_data, "\n")
     response = requests.post(url, json = {"id": "HA", "info": (request_data), "signature": signature}, verify=verifySLL)
@@ -32,7 +32,7 @@ def contact_tracing(transaction_id, groups, LP_url, LP_pub, verifySLL):
     valid_signature = encryptSignMessages.check_signature(
         response_data["info"], 
         response_data["signature"],
-        LP_pub
+        LP["public_key"]
     )   
 
     if valid_signature:
@@ -104,6 +104,8 @@ import datetime
 
 
 if __name__ == "__main__":
+    import loadConfig
+
     transaction_id = str(uuid.uuid4())
     start_date = datetime.datetime.now()
 
@@ -113,13 +115,9 @@ if __name__ == "__main__":
                            "+34 677 557 211","+34 634 539 405","+34 625 719 749","+34 656 429 322",
                            "+34 669 950 633","+34 697 772 263","+34 666 037 833","+34 663 235 390",
                            "+34 644 736 845","+34 686 931 289"]
-    infected_phones = ["299", "298", "297", "296", "295", "294", "293", "292", "291", "290"] 
 
-    groups = create_groups(infected_phones*10000, infected_phones*100000, int(len(infected_phones*1000)/10), "L")
-
-    execution_time = str(datetime.datetime.now() - start_date)
-    print(execution_time)
-    #print(groups)
-    #print("Infected groups:", groups["infected_group_ids"])
-    exit()
-    print(contact_tracing(transaction_id, groups["all_groups"], "http://locationprovider1.com", "../../DevelopmentTestKeys/LP1_public.pem", False))
+    groups = create_groups(infected_phones, non_infected_phones, 1, "L")
+    LPs = loadConfig.fill_providers_info("location_providers")
+    private_key = loadConfig.get_ha_private_key()
+    print(contact_tracing(transaction_id, groups["all_groups"], LPs[0], private_key, False))
+    print(groups["K"], groups["L"])

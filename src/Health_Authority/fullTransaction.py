@@ -1,29 +1,24 @@
 import mobileIDsRequest
 import contactTracingRequest
 import requestKeysToITPA
-
-import json
 import uuid
-
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
 import base64
-import datetime
+import loadConfig
+import sys
 
-useHttps = True
-def load_env():
-    global useHttps
-    with open("https.env", "r", encoding="utf-16") as fh:
-        content = fh.readline().split("\n")[0]
-        useHttps = content == "true" or content == "" 
-load_env()
+if len(sys.argv) != 2:
+    print("\nUsage: python3", sys.argv[0], "configuration_file", "\n")
+    exit()
+config = loadConfig.load_config_file(sys.argv[1])
 
+private_key = config["health_authorities"][0]["private_key"] 
+IDPs = loadConfig.fill_providers_info("id_providers")
+LPs = loadConfig.fill_providers_info("location_providers")
+ITPAs = loadConfig.fill_providers_info("itp_authorities")
 
-IDPURL = ("https://" if useHttps else "http://") + "idprovider.com"
-LP1URL = ("https://" if useHttps else "http://") + "locationprovider1.com"
-LP2URL = ("https://" if useHttps else "http://") + "locationprovider2.com"
-LP3URL = ("https://" if useHttps else "http://") + "locationprovider3.com"
-ITPAURL = ("https://" if useHttps else "http://") + "itpa.com"
+print(LPs, IDPs, ITPAs)
 
 def process_requests(keys, contact_tr_reply):
     id_list = []
@@ -67,7 +62,7 @@ def transaction(infected_phones, numberOfNonInfectedPerInfected, number_of_group
         print("-"*40)
         print("Requesting Mobile IDs")
         print("-"*40)
-    non_infected_phones = mobileIDsRequest.mobile_id_request(numberOfNonInfectedPerInfected*len(infected_phones), transaction_id, IDPURL, False)
+    non_infected_phones = mobileIDsRequest.mobile_id_request(numberOfNonInfectedPerInfected*len(infected_phones), transaction_id, IDPs[0], private_key, False)
 
     if allowPrint:
         print("-"*40)
@@ -78,7 +73,7 @@ def transaction(infected_phones, numberOfNonInfectedPerInfected, number_of_group
     L = groups["L"]
 
     contact_tr_reply1 = contactTracingRequest.contact_tracing(
-        transaction_id, groups["all_groups"], LP1URL, "../../DevelopmentTestKeys/LP1_public.pem", False
+        transaction_id, groups["all_groups"], LPs[0], private_key, False
     )
 
     #contact_tr_reply2 = contactTracingRequest.contact_tracing(
@@ -96,7 +91,7 @@ def transaction(infected_phones, numberOfNonInfectedPerInfected, number_of_group
         print("-"*40)
 
     keys1 = requestKeysToITPA.key_request_ha_itpa(
-        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], "LP1", ITPAURL, False
+        transaction_id, len(groups["all_groups"]), groups["infected_group_ids"], LPs[0]["id"], ITPAs[0], private_key, False
     )
 
     #keys2 = requestKeysToITPA.key_request_ha_itpa(
