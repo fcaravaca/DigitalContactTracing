@@ -8,6 +8,16 @@ config = None
 with open("configuration.json", "r") as fh:
     config = json.loads(fh.read())
 
+for env_variable in config["env_variables"]:
+    os.environ[env_variable] = config["env_variables"][env_variable]
+
+lp_urls = {}
+for lp in config["location_providers"]:
+    lp_urls[lp["id"]] = lp["url"]
+
+# The ITPAs need to know the map between LPs and URLs from config file
+os.environ["DTC_LP_URLS"] = str(lp_urls)
+
 ### Setup servers ###
 def build_docker(path, files, id):
     file_parameters = ""
@@ -16,7 +26,7 @@ def build_docker(path, files, id):
         file_parameters += " -f " + absolute_path
     os.chdir(path)
     os.system("docker-compose" + file_parameters +" -p " + id + " up --force-recreate --build -d")
-    os.system("docker image prune -f")
+    #os.system("docker image prune -f")
     os.chdir("../..")
 
 def create_security_path(path):

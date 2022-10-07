@@ -3,11 +3,7 @@ const { HttpProxyAgent, HttpsProxyAgent } = require('hpagent')
 
 var signatureUtility = require("../signatureUtility")
 var useHttps = process.env.HTTPS === "" || process.env.HTTPS === "true"
-const urls = {
-    "LP1": "locationprovider1.com",
-    "LP2": "locationprovider2.com",
-    "LP3": "locationprovider3.com",
-}
+const urls = JSON.parse(process.env.LP_URLS.replaceAll("'",'"'))
 
 async function requestKeys(transaction_ID, LP_ID, useProxy){
 
