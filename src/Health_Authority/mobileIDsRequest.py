@@ -23,6 +23,10 @@ def mobile_id_request(n, transaction_id, id_provider_url, verifySLL):
     
     response = requests.post(url, json = {"id": "HA", "info": (request_data), "signature": signature}, verify=verifySLL)
     response_data = json.loads(response.text)
+    
+    if response.status_code != 200:
+        print(response_data["error_message"])
+        return None
 
     valid_signature = encryptSignMessages.check_signature(
         response_data["info"], 

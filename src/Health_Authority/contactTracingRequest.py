@@ -25,6 +25,10 @@ def contact_tracing(transaction_id, groups, LP_url, LP_pub, verifySLL):
     #print(response)
     response_data = json.loads(response.text)
     
+    if response.status_code != 200:
+        print(response_data["error_message"])
+        return None
+        
     valid_signature = encryptSignMessages.check_signature(
         response_data["info"], 
         response_data["signature"],

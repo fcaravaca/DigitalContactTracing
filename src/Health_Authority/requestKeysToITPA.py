@@ -22,7 +22,7 @@ def key_request_ha_itpa(transaction_id, num_groups, infected_groups, LP_ID, ITPA
     
     response = requests.post(url, json = {"id": "HA", "info": (request_data), "signature": signature}, verify=verifySLL)
     response_data = json.loads(response.text)
-    print(response_data)
+
     if response.status_code != 200:
         print(response_data["error_message"])
         return None
