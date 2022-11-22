@@ -6,7 +6,18 @@ Project is in an early stage, not functional
 
 ## Execution
 
-TODO
+Build environment:
+
+```
+pip install pycryptodome
+python3 installServers.py ./configuration.json
+```
+
+Execute simulation:
+
+```
+python3 src/Health_Authority/fullTransaction.py ./configuration.json
+```
 
 ## Project Structure
 
