@@ -2,10 +2,11 @@ import os
 import shutil
 from pathlib import Path
 import json
+import sys
 
 ###  VARIABLES ###
 config = None
-with open("configuration.json", "r") as fh:
+with open(sys.argv[1], "r") as fh:
     config = json.loads(fh.read())
 
 for env_variable in config["env_variables"]:
