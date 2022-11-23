@@ -8,6 +8,8 @@ services:
     restart: always
   web:
     build: .
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       MYSQL_DATABASE: ITPA
       MYSQL_USER: root
