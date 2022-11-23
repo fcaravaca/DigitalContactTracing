@@ -46,7 +46,7 @@ router.post('/keysRequest', function(req, res, next) {
   }else{
 
     db.saveTransaction(info.transaction_ID, id,  info.LP_ID, info.total_groups, info.infected_groups.length).then(()=>{
-      keyRequest.requestKeys(info.transaction_ID, info.LP_ID, true).then(result =>{
+      keyRequest.requestKeys(info.transaction_ID, info.LP_ID).then(result =>{
         let reason = ""
         result = JSON.parse(Buffer.from(result.info, "base64").toString())
         if(result.keys.length !== info.total_groups){ //Bad request

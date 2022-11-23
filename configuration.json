@@ -1,6 +1,7 @@
 {
     "env_variables": {
-        "DCT_HTTPS": "true"
+        "DCT_HTTPS": "true",
+        "DCT_VALIDATE_HTTPS": "false"
     },
     "health_authorities":[
         {
@@ -14,7 +15,7 @@
             "private_key": "DevelopmentTestKeys/ITPA.pem",
             "public_key": "DevelopmentTestKeys/ITPA_public.pem",
             "id": "ITPA",
-            "url": "itpa.com",
+            "url": "127.0.0.1:5000",
             "https_cert_conf": "DevelopmentTestKeys/reqITPA.cnf",
             "docker_compose_files": [
                 "src/ITP_Authority/docker-compose.yml"
@@ -26,7 +27,7 @@
             "private_key": "DevelopmentTestKeys/IDP.pem",
             "public_key": "DevelopmentTestKeys/IDP_public.pem",
             "id": "IDP",
-            "url": "idprovider.com",
+            "url": "127.0.0.1:3000",
             "https_cert_conf": "DevelopmentTestKeys/reqIDP.cnf",
             "docker_compose_files": [
                 "src/ID_Provider/docker-compose.yml"
@@ -38,7 +39,7 @@
             "private_key": "DevelopmentTestKeys/LP1.pem",
             "public_key": "DevelopmentTestKeys/LP1_public.pem",
             "id": "LP1",
-            "url": "locationprovider1.com",
+            "url": "127.0.0.1:2000",
             "https_cert_conf": "DevelopmentTestKeys/reqLP1.cnf",
             "docker_compose_files": [
                 "src/Location_Provider/docker-compose.yml",
@@ -49,7 +50,7 @@
             "private_key": "DevelopmentTestKeys/LP2.pem",
             "public_key": "DevelopmentTestKeys/LP2_public.pem",
             "id": "LP2",
-            "url": "locationprovider2.com",
+            "url": "127.0.0.1:2100",
             "https_cert_conf": "DevelopmentTestKeys/reqLP2.cnf",
             "docker_compose_files": [
                 "src/Location_Provider/docker-compose.yml",
@@ -60,7 +61,7 @@
             "private_key": "DevelopmentTestKeys/LP3.pem",
             "public_key": "DevelopmentTestKeys/LP3_public.pem",
             "id": "LP3",
-            "url": "locationprovider3.com",
+            "url": "127.0.0.1:2200",
             "https_cert_conf": "DevelopmentTestKeys/reqLP3.cnf",
             "docker_compose_files": [
                 "src/Location_Provider/docker-compose.yml",

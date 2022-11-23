@@ -15,6 +15,7 @@ services:
       MYSQL_HOST: db
       HTTPS: $DCT_HTTPS
       LP_URLS: $DTC_LP_URLS
+      VALIDATE_HTTPS: $DCT_VALIDATE_HTTPS
     depends_on:
       - db
     restart: on-failure
