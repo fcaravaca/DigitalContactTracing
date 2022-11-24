@@ -1,11 +1,14 @@
 # DigitalContactTracing
 
-Digital Contact Tracing implementation, based on: "Digital Contact Tracing: Large-Scale Geolocation Data as an Alternative to Bluetooth-Based Apps Failure".
+Digital Contact Tracing implementation, based on: "Digital Contact Tracing: Large-Scale Geolocation Data as an Alternative to Bluetooth-Based Apps Failure". Article available online: https://doi.org/10.3390/electronics10091093
+
 
 ## Requirements in local environment
 
 Docker (v20.10+ needed in linux)  
+
 Docker-compose
+
 Python3 (and pycryptodome)
 
 ## Execution
@@ -29,7 +32,9 @@ python3 src/Health_Authority/fullTransaction.py ./configuration.json
 
 ## Project Structure
 
-TODO
+3 servers 1 client
+
+Servers -> HTTPs server + database for auditing
 
 ## Configuration 
 
