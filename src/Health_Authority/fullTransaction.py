@@ -23,24 +23,19 @@ print(LPs, IDPs, ITPAs)
 def process_requests(keys, contact_tr_reply):
     id_list = []
     for group in keys["keys"]:
-        #print("-"*40,"\n", sep=""),
         encrypt_data = None
         for encrypt_group in contact_tr_reply["groups"]:
             if group["group_id"] == encrypt_group["group_id"]:
                 encrypt_data = encrypt_group["contact_ids"]
 
-        #print("Encrypted data:", encrypt_data, "\n( Group:", group["group_id"], ")")
 
         base64_bytes = encrypt_data.encode('ascii')
         message_bytes = base64.b64decode(base64_bytes)
-
-        #print("Key:", group["aes_key"], "| IV:", group["iv"],"\n")
 
         cipher = AES.new(bytes.fromhex(group["aes_key"]), AES.MODE_CBC, bytes.fromhex(group["iv"]))
         pt = unpad(cipher.decrypt(message_bytes),AES.block_size) # The unpad is necessary
         decoded_message = pt.decode("utf-8")
         
-        #print("Decrypted data: ", decoded_message)
         decoded_message = decoded_message.replace('"','') # Remove unnecessary "
         group_phone_list = decoded_message.split("[")[1].split("]")[0].split(",") # Remove brackets and split by commas
     
@@ -51,9 +46,6 @@ def process_requests(keys, contact_tr_reply):
 def transaction(infected_phones, numberOfNonInfectedPerInfected, number_of_groups, mode="L", allowPrint=True):
 
     transaction_id = str(uuid.uuid4())
-    #infected_phones = ["299", "298", "297", "296", "295"] * 20 #, "294", "293", "292", "291", "290"]
-
-    #max_group_size = 5
 
     if allowPrint:
         print("\nGenerated Transaction ID:", transaction_id)
@@ -63,6 +55,14 @@ def transaction(infected_phones, numberOfNonInfectedPerInfected, number_of_group
         print("Requesting Mobile IDs")
         print("-"*40)
     non_infected_phones = mobileIDsRequest.mobile_id_request(numberOfNonInfectedPerInfected*len(infected_phones), transaction_id, IDPs[0], private_key, False)
+
+    if non_infected_phones is None:
+        print("Failed requesting Mobile IDs")
+        exit()
+
+    
+
+    print(non_infected_phones["transaction_ID"])
 
     if allowPrint:
         print("-"*40)

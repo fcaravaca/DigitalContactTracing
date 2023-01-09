@@ -61,6 +61,12 @@ def fill_groups(phones, number_of_groups):
 def create_groups(infected_phones, non_infected_phones, number_of_groups, mode="L"):
 
     # Need to check if an infected phone in the non infected array
+    new_non_infected_phones = []
+    for item in non_infected_phones:
+        if item not in infected_phones:
+            new_non_infected_phones.append(item)
+    non_infected_phones = new_non_infected_phones
+
     if mode == "L":
         L = number_of_groups
         group_size = len(infected_phones)/L
@@ -109,7 +115,7 @@ if __name__ == "__main__":
     transaction_id = str(uuid.uuid4())
     start_date = datetime.datetime.now()
 
-    infected_phones = ["+34 665 815 328","+34 625 939 653","+34 695 860 912"]
+    infected_phones = ["+34 665 815 328","+34 625 939 653","+34 695 860 912", "+34 680 324 855"]
     non_infected_phones = ["+34 680 324 855","+34 611 215 353","+34 684 469 808","+34 636 098 607",
                            "+34 649 780 929","+34 690 057 633","+34 624 676 105","+34 663 410 563",
                            "+34 677 557 211","+34 634 539 405","+34 625 719 749","+34 656 429 322",
