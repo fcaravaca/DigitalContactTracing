@@ -4,6 +4,7 @@ import uuid
 import base64
 import encryptSignMessages
 import json
+import os
 
 def contact_tracing(transaction_id, groups, LP, private_key, verifySLL):
     
@@ -58,7 +59,35 @@ def fill_groups(phones, number_of_groups):
 
     return groups
 
-def create_groups(infected_phones, non_infected_phones, number_of_groups, mode="L"):
+def reuse_prev_ids(non_infected_phones, infected_phones):
+
+    prev = []
+    if os.path.isfile("prev_reqs"):
+        with open("prev_reqs", "r") as fh:
+            try:
+                v = fh.read().split(",")
+                for i in range(len(v)):
+                    v[i] = v[i].strip()
+                prev = v
+                print(prev)
+            except:
+                pass
+    non_infected_phones = non_infected_phones + prev
+    random.shuffle(non_infected_phones)
+
+    all_phones = infected_phones + non_infected_phones
+    sample_size = int(len(all_phones) * random.uniform(0.1, 0.3))
+    random_sample = random.sample(all_phones, sample_size)
+
+    with open("prev_reqs", "w") as fh:
+        fh.write(str(random_sample).replace("[", "").replace("]", "").replace("'", ""))
+
+    return non_infected_phones
+
+def create_groups(infected_phones, non_infected_phones, number_of_groups, mode="L", reuse_groups=False):
+
+    if reuse_groups:
+        non_infected_phones = reuse_prev_ids(non_infected_phones, infected_phones) # Reuse IDs from previous transactions
 
     # Need to check if an infected phone in the non infected array
     new_non_infected_phones = []
